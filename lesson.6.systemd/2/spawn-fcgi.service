@@ -1,0 +1,12 @@
+[Unit]
+Description=spawn-fcgi
+After=syslog.target network.target
+
+[Service]
+EnvironmentFile=/etc/sysconfig/spawn-fcgi
+ExecStart=/usr/bin/spawn-fcgi $OPTIONS
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

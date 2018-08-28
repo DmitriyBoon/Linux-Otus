@@ -1,0 +1,138 @@
+Script started on Thu 09 Aug 2018 16:47:51 CEST
+]0;root@localhost:/mnt/dumo[?1034h[root@localhost dumo]# lsblk
+NAME                    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0    40G  0 disk 
+├─sda1                    8:1    0     1M  0 part 
+├─sda2                    8:2    0     1G  0 part 
+└─sda3                    8:3    0    39G  0 part 
+  ├─VolGroup00-LogVol00 253:3    0  37.5G  0 lvm  
+  └─VolGroup00-LogVol01 253:4    0   1.5G  0 lvm  [SWAP]
+sdb                       8:16   0    30G  0 disk 
+└─sdb1                    8:17   0    10G  0 part 
+  └─VolGroup00-dump     253:5    0   9.8G  0 lvm  /mnt/dumo
+sr0                      11:0    1     1G  0 rom  /run/initramfs/live
+loop0                     7:0    0    20K  1 loop 
+loop1                     7:1    0   4.3M  1 loop 
+└─live-osimg-min        253:2    0     8G  1 dm   
+loop2                     7:2    0 986.3M  1 loop 
+loop3                     7:3    0     8G  1 loop 
+├─live-rw               253:0    0     8G  0 dm   /
+├─live-base             253:1    0     8G  1 dm   
+└─live-osimg-min        253:2    0     8G  1 dm   
+loop4                     7:4    0   512M  0 loop 
+└─live-rw               253:0    0     8G  0 dm   /
+]0;root@localhost:/mnt/dumo[root@localhost dumo]# lvreduce -L29.47G /dev/VolGroup00/LogVol00
+  Rounding size to boundary between physical extents: 29.50 GiB
+  WARNING: Reducing active logical volume to 29.50 GiB
+  THIS MAY DESTROY YOUR DATA (filesystem etc.)
+Do you really want to reduce LogVol00? [y/n]: y
+  Reducing logical volume LogVol00 to 29.50 GiB
+  Logical volume LogVol00 successfully resized
+]0;root@localhost:/mnt/dumo[root@localhost dumo]# mkfs.xfs -f /dev/
+Display all 164 possibilities? (y or n)
+[root@localhost dumo]# mkfs.xfs -f /dev/VolGroup00/l[KLogVol00
+meta-data=/dev/VolGroup00/LogVol00 isize=256    agcount=4, agsize=1933312 blks
+         =                       sectsz=512   attr=2, projid32bit=1
+         =                       crc=0
+data     =                       bsize=4096   blocks=7733248, imaxpct=25
+         =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0 ftype=0
+log      =internal log           bsize=4096   blocks=3776, version=2
+         =                       sectsz=512   sunit=0 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+]0;root@localhost:/mnt/dumo[root@localhost dumo]# cd ..
+]0;root@localhost:/mnt[root@localhost mnt]# mkdir root 
+]0;root@localhost:/mnt[root@localhost mnt]# mount de[K[K/dev/VolGroup00/LogVol00 /mnt/root/
+]0;root@localhost:/mnt[root@localhost mnt]# xfsrestorwe[K[Ke -f /mnt/dumo/dump.root /mnt/root
+xfsrestore: using file dump (drive_simple) strategy
+xfsrestore: version 3.1.3 (dump format 3.0) - type ^C for status and control
+xfsrestore: searching media for dump
+xfsrestore: examining media file 0
+xfsrestore: dump description: 
+xfsrestore: hostname: localhost.localdomain
+xfsrestore: mount point: /
+xfsrestore: volume: /dev/mapper/VolGroup00-LogVol00
+xfsrestore: session time: Thu Aug  9 15:13:04 2018
+xfsrestore: level: 0
+xfsrestore: session label: "root"
+xfsrestore: media label: "root"
+xfsrestore: file system id: b60e9498-0baa-4d9f-90aa-069048217fee
+xfsrestore: session id: bc7a90f7-d1ef-4ed2-9e5c-5177bf61238e
+xfsrestore: media id: 98b20ced-a504-42ad-b409-74c375cb72b0
+xfsrestore: searching media for directory dump
+xfsrestore: reading directories
+xfsrestore: 8100 directories and 51697 entries processed
+xfsrestore: directory post-processing
+xfsrestore: WARNING: unable to set secure extended attribute for var/lib/machines: Invalid argument (22)
+xfsrestore: restoring non-directory files
+xfsrestore: WARNING: unable to set secure extended attribute for usr/bin/journalctl: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/bin/systemd-hwdb: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/bin/chronyc: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/systemd-bootchart: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/systemd-initctl: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/systemd-machined: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/sbin/blkmapd: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for etc/udev/hwdb.bin: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/system/systemd-bootchart.service: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/system/systemd-hwdb-update.service: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/system/systemd-machined.service: Invalid argument (22)
+xfsrestore: WARNING: unable to set secure extended attribute for usr/lib/systemd/system/systemd-timedated.service: Invalid argument (22)
+xfsrestore: restore complete: 26 seconds elapsed
+xfsrestore: Restore Summary:
+xfsrestore:   stream 0 /mnt/dumo/dump.root OK (success)
+xfsrestore: Restore Status: SUCCESS
+]0;root@localhost:/mnt[root@localhost mnt]# l[Kfdisk /dev/sdb
+Welcome to fdisk (util-linux 2.23.2).
+
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): n
+Partition type:
+   p   primary (1 primary, 0 extended, 3 free)
+   e   extended
+Select (default p): 
+Using default response p
+Partition number (2-4, default 2): 
+First sector (20973568-62914559, default 20973568): 
+Using default value 20973568
+Last sector, +sectors or +size{K,M,G} (20973568-62914559, default 62914559): +10G
+Partition 2 of type Linux and of size 10 GiB is set
+
+Command (m for help): n
+Partition type:
+   p   primary (2 primary, 0 extended, 2 free)
+   e   extended
+Select (default p): 
+Using default response p
+Partition number (3,4, default 3): 
+First sector (41945088-62914559, default 41945088): 
+Using default value 41945088
+Last sector, +sectors or +size{K,M,G} (41945088-62914559, default 62914559): +10G
+Value out of range.
+Last sector, +sectors or +size{K,M,G} (41945088-62914559, default 62914559): w
+Last sector, +sectors or +size{K,M,G} (41945088-62914559, default 62914559): +5G
+Partition 3 of type Linux and of size 5 GiB is set
+
+Command (m for help): w
+The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+
+WARNING: Re-reading the partition table failed with error 16: Device or resource busy.
+The kernel still uses the old table. The new table will be used at
+the next reboot or after you run partprobe(8) or kpartx(8)
+Syncing disks.
+]0;root@localhost:/mnt[root@localhost mnt]# fdisk /dev/sdbxfsrestore -f /mnt/dumo/dump.root /mnt/root[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[2Pmount /dev/VolGroup00/LogVol00 /mnt/root/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cxfsrestore -f /mnt/dumo/dump.root /mnt/root[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cfdisk /dev/sdb[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Klsblk
+NAME                    MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0    40G  0 disk 
+├─sda1                    8:1    0     1M  0 part 
+├─sda2                    8:2    0     1G  0 part 
+└─sda3                    8:3    0    39G  0 part 
+  ├─VolGroup00-LogVol00 253:3    0  29.5G  0 lvm  /mnt/root
+  └─VolGroup00-LogVol01 253:4    0   1.5G  0 lvm  [SWAP]
+sdb                       8:16   0    30G  0 disk 
+└─sdb1                    8:17   0    10G  0 part 
+  └─VolGroup00-dump     253:5    0   9.8G  0 lvm  /mnt/dumo
+sr0                      11:0    1     1G  0 rom  /run/initramfs/

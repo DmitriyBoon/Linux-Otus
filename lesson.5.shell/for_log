@@ -1,0 +1,9 @@
+# Однострочники 
+
+ tail -f /var/log/nginx/nginx.access.log | cut -d ' ' -f 1 | logtop
+ 
+ tail -f /var/log/nginx/nginx.access.log
+ 
+ grep "&key=" /var/log/nginx/nginx.access.log | cut -d ' ' -f 1 | sort | uniq -c | sort -n | tail -n 30
+ 
+ grep "&key=" /var/log/nginx/nginx.access.log

@@ -1,0 +1,9 @@
+[Unit]
+Description=timer val-for-lesson
+ 
+[Timer]
+OnCalendar=*:*:0,30
+Unit=val-for-lesson.service
+
+[Install]
+WantedBy=timers.target

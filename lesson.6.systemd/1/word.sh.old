@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+while read line
+do
+
+echo "$line" | cut -d " " -f 6 | grep $keyw 
+
+done < $meslog
+
+echo `date` >>/var/log/val01.log

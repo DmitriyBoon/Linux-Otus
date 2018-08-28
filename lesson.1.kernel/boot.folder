@@ -1,0 +1,22 @@
+total 86216
+-rw-r--r--. 1 root root   147823 May  9 18:19 config-3.10.0-862.2.3.el7.x86_64
+-rw-r--r--. 1 root root   147837 Jul 16 16:43 config-3.10.0-862.9.1.el7.x86_64
+-rw-r--r--. 1 root root   198228 Jul 28 09:07 config-4.14.59
+drwxr-xr-x. 3 root root       17 May 12 18:50 efi
+drwxr-xr-x. 2 root root       27 May 12 18:51 grub
+drwx------. 5 root root       97 Jul 28 08:55 grub2
+-rw-------. 1 root root 16506787 May 12 18:55 initramfs-3.10.0-862.2.3.el7.x86_64.img
+-rw-------. 1 root root 14664149 Jul 28 06:14 initramfs-3.10.0-862.9.1.el7.x86_64.img
+-rw-------. 1 root root 15108834 Jul 28 08:42 initramfs-4.14.59.img
+-rw-r--r--. 1 root root   304926 May  9 18:21 symvers-3.10.0-862.2.3.el7.x86_64.gz
+-rw-r--r--. 1 root root   305117 Jul 16 16:45 symvers-3.10.0-862.9.1.el7.x86_64.gz
+lrwxrwxrwx. 1 root root       24 Jul 28 08:42 System.map -> /boot/System.map-4.14.59
+-rw-------. 1 root root  3409102 May  9 18:19 System.map-3.10.0-862.2.3.el7.x86_64
+-rw-------. 1 root root  3412056 Jul 16 16:43 System.map-3.10.0-862.9.1.el7.x86_64
+-rw-r--r--. 1 root root  3436273 Jul 28 08:42 System.map-4.14.59
+-rw-r--r--. 1 root root  3436273 Jul 28 08:33 System.map-4.14.59.old
+lrwxrwxrwx. 1 root root       21 Jul 28 08:42 vmlinuz -> /boot/vmlinuz-4.14.59
+-rwxr-xr-x. 1 root root  6225056 May  9 18:19 vmlinuz-3.10.0-862.2.3.el7.x86_64
+-rwxr-xr-x. 1 root root  6234048 Jul 16 16:43 vmlinuz-3.10.0-862.9.1.el7.x86_64
+-rw-r--r--. 1 root root  7357712 Jul 28 08:42 vmlinuz-4.14.59
+-rw-r--r--. 1 root root  7357712 Jul 28 08:33 vmlinuz-4.14.59.old

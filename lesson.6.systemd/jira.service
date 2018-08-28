@@ -1,0 +1,12 @@
+[Unit] 
+Description=Jira new unit
+After=network.target
+
+[Service] 
+Type=simple
+PIDFile=/opt/atlassian/jira-17.06/work/catalina.pid
+ExecStart=/opt/atlassian/jira-17.06/bin/start-jira.sh
+ExecStop=/opt/atlassian/jira-17.06/bin/stop-jira.sh
+
+[Install] 
+WantedBy=multi-user.target

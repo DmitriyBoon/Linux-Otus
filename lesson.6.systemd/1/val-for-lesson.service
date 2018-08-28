@@ -1,0 +1,12 @@
+[Unit]
+Description=find word in file
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/val-for-lesson
+ExecStart=/usr/bin/grep $foundw $lookf
+ExecReload=/bin/kill 9
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target

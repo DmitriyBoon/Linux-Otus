@@ -1,0 +1,485 @@
+Script started on Thu 09 Aug 2018 04:06:04 PM UTC
+[root@localhost ~]# rebootfdisk /dev/sdb[9Plsblkfdisk /dev/sdb[9Plsblkcat /etc/mtab  > /mnt/dump/mtab[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cmount /dev/VolGroup00/dump /mnt/dump/[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[6Pcat /etc/mtab  > /mnt/dump/mtab[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kmodeprobe zfx
+bash: modeprobe: command not found
+[root@localhost ~]# modeprobe zfx[C[C[C[C[1P
+modprobe: FATAL: Module zfx not found.
+[root@localhost ~]# modprobe zfx[C[C[C[K[K[K[K[K[K[K[K[K[K[K[Klsmod | grep zfs
+[01;31m[Kzfs[m[K                  3559892  0 
+zunicode              331170  1 [01;31m[Kzfs[m[K
+zavl                   15236  1 [01;31m[Kzfs[m[K
+icp                   270187  1 [01;31m[Kzfs[m[K
+zcommon                73440  1 [01;31m[Kzfs[m[K
+znvpair                89131  2 [01;31m[Kzfs[m[K,zcommon
+spl                   102412  4 icp,[01;31m[Kzfs[m[K,zcommon,znvpair
+[root@localhost ~]# lsmod | grep zfs[4Pmodprobe zfx[K[K[K[K[K[K[K[K[K[K[K[Kzpool
+missing command
+usage: zpool command args ...
+where 'command' is one of the following:
+
+	create [-fnd] [-o property=value] ... 
+	    [-O file-system-property=value] ... 
+	    [-m mountpoint] [-R root] <pool> <vdev> ...
+	destroy [-f] <pool>
+
+	add [-fgLnP] [-o property=value] <pool> <vdev> ...
+	remove <pool> <device> ...
+
+	labelclear [-f] <vdev>
+
+	list [-gHLpPv] [-o property[,...]] [-T d|u] [pool] ... [interval [count]]
+	iostat [[[-c [script1,script2,...][-lq]]|[-rw]] [-T d | u] [-ghHLpPvy]
+	    [[pool ...]|[pool vdev ...]|[vdev ...]] [interval [count]]
+	status [-c [script1,script2,...]] [-gLPvxD][-T d|u] [pool] ... [interval [count]]
+
+	online <pool> <device> ...
+	offline [-f] [-t] <pool> <device> ...
+	clear [-nF] <pool> [device]
+	reopen <pool>
+
+	attach [-f] [-o property=value] <pool> <device> <new-device>
+	detach <pool> <device>
+	replace [-f] [-o property=value] <pool> <device> [new-device]
+	split [-gLnP] [-R altroot] [-o mntopts]
+	    [-o property=value] <pool> <newpool> [<device> ...]
+
+	scrub [-s | -p] <pool> ...
+
+	import [-d dir] [-D]
+	import [-d dir | -c cachefile] [-F [-n]] <pool | id>
+	import [-o mntopts] [-o property=value] ... 
+	    [-d dir | -c cachefile] [-D] [-f] [-m] [-N] [-R root] [-F [-n]] -a
+	import [-o mntopts] [-o property=value] ... 
+	    [-d dir | -c cachefile] [-D] [-f] [-m] [-N] [-R root] [-F [-n]]
+	    <pool | id> [newpool]
+	export [-af] <pool> ...
+	upgrade
+	upgrade -v
+	upgrade [-V version] <-a | pool ...>
+	reguid <pool>
+
+	history [-il] [<pool>] ...
+	events [-vHfc]
+
+	get [-Hp] [-o "all" | field[,...]] <"all" | property[,...]> <pool> ...
+	set <property=value> <pool> 
+	sync [pool] ...
+[root@localhost ~]# zpool -list
+unrecognized command '-list'
+usage: zpool command args ...
+where 'command' is one of the following:
+
+	create [-fnd] [-o property=value] ... 
+	    [-O file-system-property=value] ... 
+	    [-m mountpoint] [-R root] <pool> <vdev> ...
+	destroy [-f] <pool>
+
+	add [-fgLnP] [-o property=value] <pool> <vdev> ...
+	remove <pool> <device> ...
+
+	labelclear [-f] <vdev>
+
+	list [-gHLpPv] [-o property[,...]] [-T d|u] [pool] ... [interval [count]]
+	iostat [[[-c [script1,script2,...][-lq]]|[-rw]] [-T d | u] [-ghHLpPvy]
+	    [[pool ...]|[pool vdev ...]|[vdev ...]] [interval [count]]
+	status [-c [script1,script2,...]] [-gLPvxD][-T d|u] [pool] ... [interval [count]]
+
+	online <pool> <device> ...
+	offline [-f] [-t] <pool> <device> ...
+	clear [-nF] <pool> [device]
+	reopen <pool>
+
+	attach [-f] [-o property=value] <pool> <device> <new-device>
+	detach <pool> <device>
+	replace [-f] [-o property=value] <pool> <device> [new-device]
+	split [-gLnP] [-R altroot] [-o mntopts]
+	    [-o property=value] <pool> <newpool> [<device> ...]
+
+	scrub [-s | -p] <pool> ...
+
+	import [-d dir] [-D]
+	import [-d dir | -c cachefile] [-F [-n]] <pool | id>
+	import [-o mntopts] [-o property=value] ... 
+	    [-d dir | -c cachefile] [-D] [-f] [-m] [-N] [-R root] [-F [-n]] -a
+	import [-o mntopts] [-o property=value] ... 
+	    [-d dir | -c cachefile] [-D] [-f] [-m] [-N] [-R root] [-F [-n]]
+	    <pool | id> [newpool]
+	export [-af] <pool> ...
+	upgrade
+	upgrade -v
+	upgrade [-V version] <-a | pool ...>
+	reguid <pool>
+
+	history [-il] [<pool>] ...
+	events [-vHfc]
+
+	get [-Hp] [-o "all" | field[,...]] <"all" | property[,...]> <pool> ...
+	set <property=value> <pool> 
+	sync [pool] ...
+[root@localhost ~]# zpool -list[1Plist
+no pools available
+[root@localhost ~]# zpool create opt /dev/sdb2 /devs[K/sdb3
+[root@localhost ~]# zpool create opt /dev/sdb2 /dev/sdb3[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Clist[K
+NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+opt    160M   266K   160M         -     1%     0%  1.00x  ONLINE  -
+[root@localhost ~]# ^C
+[root@localhost ~]# df -h
+Filesystem                       Size  Used Avail Use% Mounted on
+/dev/mapper/VolGroup00-LogVol00  8.0G  910M  7.2G  12% /
+devtmpfs                         1.9G     0  1.9G   0% /dev
+tmpfs                            1.9G     0  1.9G   0% /dev/shm
+tmpfs                            1.9G  8.5M  1.9G   1% /run
+tmpfs                            1.9G     0  1.9G   0% /sys/fs/cgroup
+/dev/mapper/VolGroup00-var       976M  228M  682M  26% /var
+/dev/mapper/VolGroup00-home      976M  2.6M  907M   1% /home
+/dev/sda2                       1014M   87M  928M   9% /boot
+/dev/mapper/VolGroup00-dump      9.8G  1.1G  8.8G  11% /mnt/dump
+opt                               80M     0   80M   0% /opt
+[root@localhost ~]# df -hzpool listcreate opt /dev/sdb2 /dev/sdb3[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Clist[K
+NAME   SIZE  ALLOC   FREE  EXPANDSZ   FRAG    CAP  DEDUP  HEALTH  ALTROOT
+opt    160M   146K   160M         -     1%     0%  1.00x  ONLINE  -
+[root@localhost ~]# mount | grep z[Kopt
+[01;31m[Kopt[m[K on /[01;31m[Kopt[m[K type zfs (rw,seclabel,xattr,noacl)
+[root@localhost ~]# nano /etc/fstab 
+[1;25r[0;10m[4l[?7h[?25h[?0c[39;49m[39;49m[0;10m[H[J[0;10;7m  GNU nano 2.3.1              File: /etc/fstab                                  [4;1H[0;10m#[5d# /etc/fstab[6d# Created by anaconda on Sat May 12 18:50:26 2018[7d#[8d# Accessible filesystems, by reference, are maintained under '/dev/disk'[9d# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info[10d#[11d/dev/mapper/VolGroup00-LogVol00 /[11;57Hxfs     defaults[80G$[12;1HUUID=570897ca-e759-4c81-90cf-389da6eee4cc /boot[12;67Hxfs     defau$[13;1H/dev/mapper/VolGroup00-LogVol01 swap[13;57Hswap    defaults[80G$[14;1H/dev/VolGroup00/home /home ext4 noatime 00[15d/dev/VolGroup00/var /var ext4 noatime 00[23;32H[0;10;7m[ Read 14 lines ][24d^G[0;10m Get Help  [0;10;7m^O[0;10m WriteOut  [0;10;7m^R[0;10m Read File [0;10;7m^Y[0;10m Prev Page [0;10;7m^K[0;10m Cut Text  [0;10;7m^C[0;10m Cur Pos[25d[0;10;7m^X[0;10m Exit[14G[0;10;7m^J[0;10m Justify   [0;10;7m^W[0;10m Where Is  [0;10;7m^V[0;10m Next Page [0;10;7m^U[0;10m UnCut Text[0;10;7m^T[0;10m To Spell[3d[4d[5d[6d[7d[8d[9d[10d[11d[12d[13d[14d[15d[24d[J[25;80H[25;1H[root@localhost ~]# nano /etc/fstab mount | grep opt
+[01;31m[Kopt[m[K on /[01;31m[Kopt[m[K type zfs (rw,seclabel,xattr,noacl)
+[root@localhost ~]# zfs mount
+opt                             /opt
+[root@localhost ~]# ^C
+[root@localhost ~]# ls /dv[Kev/
+Display all 149 possibilities? (y or n)
+[root@localhost ~]# ls /dev/z
+zero  zfs   
+[root@localhost ~]# ls /dev/zfs 
+anaconda-ks.cfg  .bash_profile    .config/         original-ks.cfg
+.bash_history    .bashrc          .cshrc           .pki/
+.bash_logout     .cache/          .local/          .tcshrc
+[root@localhost ~]# ls /dev/zfs [K/[K[Ks[K[K[K[K[K[K[K[K[K[K[Kyum update
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.reconn.ru
+ * epel: mirror.nsc.liu.se
+ * extras: mirror.reconn.ru
+ * updates: mirror.logol.ru
+No packages marked for update
+[root@localhost ~]# lsblk
+NAME                    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                       8:0    0   40G  0 disk 
+├─sda1                    8:1    0    1M  0 part 
+├─sda2                    8:2    0    1G  0 part /boot
+└─sda3                    8:3    0   39G  0 part 
+  ├─VolGroup00-LogVol00 253:0    0    8G  0 lvm  /
+  ├─VolGroup00-LogVol01 253:1    0  1.5G  0 lvm  [SWAP]
+  ├─VolGroup00-var      253:3    0    1G  0 lvm  /var
+  └─VolGroup00-home     253:4    0    1G  0 lvm  /home
+sdb                       8:16   0   30G  0 disk 
+├─sdb1                    8:17   0   10G  0 part 
+│ └─VolGroup00-dump     253:2    0  9.8G  0 lvm  /mnt/dump
+├─sdb2                    8:18   0  100M  0 part 
+├─sdb3                    8:19   0  100M  0 part 
+└─sdb4                    8:20   0    1K  0 part 
+sr0                      11:0    1  906M  0 rom  
+[root@localhost ~]# blkid
+/dev/sda2: UUID="570897ca-e759-4c81-90cf-389da6eee4cc" TYPE="xfs" 
+/dev/sda3: UUID="vrrtbx-g480-HcJI-5wLn-4aOf-Olld-rC03AY" TYPE="LVM2_member" 
+/dev/sdb1: UUID="TGaKd7-SqFK-nw4p-tp16-Rbbh-avmB-ZLsC3h" TYPE="LVM2_member" 
+/dev/sdb2: LABEL="opt" UUID="1018781018475974435" UUID_SUB="11115860563462020743" TYPE="zfs_member" 
+/dev/sdb3: LABEL="opt" UUID="1018781018475974435" UUID_SUB="17425271666505991357" TYPE="zfs_member" 
+/dev/sr0: UUID="2018-05-03-21-07-04-00" LABEL="CentOS 7 x86_64" TYPE="iso9660" PTTYPE="dos" 
+/dev/mapper/VolGroup00-LogVol00: UUID="9ed57931-ecba-4bb7-8a0f-3b7bb1959723" TYPE="xfs" 
+/dev/mapper/VolGroup00-LogVol01: UUID="c39c5bed-f37c-4263-bee8-aeb6a6659d7b" TYPE="swap" 
+/dev/mapper/VolGroup00-dump: UUID="9f6de249-3a02-4162-a10c-2733922632d8" TYPE="xfs" 
+/dev/mapper/VolGroup00-var: UUID="d86b3003-76ea-4d3e-adf1-8d84b8754ce5" TYPE="ext4" 
+/dev/mapper/VolGroup00-home: UUID="2713b27d-0959-463e-bd31-cf1fc818ea61" TYPE="ext4" 
+[root@localhost ~]# zfs get mount point opt
+bad property list: invalid property 'mount'
+usage:
+	get [-rHp] [-d max] [-o "all" | field[,...]]
+	    [-t type[,...]] [-s source[,...]]
+	    <"all" | property[,...]> [filesystem|volume|snapshot|bookmark] ...
+
+The following properties are supported:
+
+	PROPERTY       EDIT  INHERIT   VALUES
+
+	available        NO       NO   <size>
+	clones           NO       NO   <dataset>[,...]
+	compressratio    NO       NO   <1.00x or higher if compressed>
+	createtxg        NO       NO   <uint64>
+	creation         NO       NO   <date>
+	defer_destroy    NO       NO   yes | no
+	filesystem_count  NO       NO   <count>
+	guid             NO       NO   <uint64>
+	logicalreferenced  NO       NO   <size>
+	logicalused      NO       NO   <size>
+	mounted          NO       NO   yes | no
+	origin           NO       NO   <snapshot>
+	receive_resume_token  NO       NO   <string token>
+	refcompressratio  NO       NO   <1.00x or higher if compressed>
+	referenced       NO       NO   <size>
+	snapshot_count   NO       NO   <count>
+	type             NO       NO   filesystem | volume | snapshot | bookmark
+	used             NO       NO   <size>
+	usedbychildren   NO       NO   <size>
+	usedbydataset    NO       NO   <size>
+	usedbyrefreservation  NO       NO   <size>
+	usedbysnapshots  NO       NO   <size>
+	userrefs         NO       NO   <count>
+	written          NO       NO   <size>
+	aclinherit      YES      YES   discard | noallow | restricted | passthrough | passthrough-x
+	acltype         YES      YES   noacl | posixacl
+	atime           YES      YES   on | off
+	canmount        YES       NO   on | off | noauto
+	casesensitivity  NO      YES   sensitive | insensitive | mixed
+	checksum        YES      YES   on | off | fletcher2 | fletcher4 | sha256 | sha512 | skein | edonr
+	compression     YES      YES   on | off | lzjb | gzip | gzip-[1-9] | zle | lz4
+	context         YES       NO   <selinux context>
+	copies          YES      YES   1 | 2 | 3
+	dedup           YES      YES   on | off | verify | sha256[,verify], sha512[,verify], skein[,verify], edonr,verify
+	defcontext      YES       NO   <selinux defcontext>
+	devices         YES      YES   on | off
+	dnodesize       YES      YES   legacy | auto | 1k | 2k | 4k | 8k | 16k
+	exec            YES      YES   on | off
+	filesystem_limit YES       NO   <count> | none
+	fscontext       YES       NO   <selinux fscontext>
+	logbias         YES      YES   latency | throughput
+	mlslabel        YES      YES   <sensitivity label>
+	mountpoint      YES      YES   <path> | legacy | none
+	nbmand          YES      YES   on | off
+	normalization    NO      YES   none | formC | formD | formKC | formKD
+	overlay         YES      YES   on | off
+	primarycache    YES      YES   all | none | metadata
+	quota           YES       NO   <size> | none
+	readonly        YES      YES   on | off
+	recordsize      YES      YES   512 to 1M, power of 2
+	redundant_metadata YES      YES   all | most
+	refquota        YES       NO   <size> | none
+	refreservation  YES       NO   <size> | none
+	relatime        YES      YES   on | off
+	reservation     YES       NO   <size> | none
+	rootcontext     YES       NO   <selinux rootcontext>
+	secondarycache  YES      YES   all | none | metadata
+	setuid          YES      YES   on | off
+	sharenfs        YES      YES   on | off | share(1M) options
+	sharesmb        YES      YES   on | off | sharemgr(1M) options
+	snapdev         YES      YES   hidden | visible
+	snapdir         YES      YES   hidden | visible
+	snapshot_limit  YES       NO   <count> | none
+	sync            YES      YES   standard | always | disabled
+	utf8only         NO      YES   on | off
+	version         YES       NO   1 | 2 | 3 | 4 | 5 | current
+	volblocksize     NO      YES   512 to 128k, power of 2
+	volmode         YES      YES   default | full | geom | dev | none
+	volsize         YES       NO   <size>
+	vscan           YES      YES   on | off
+	xattr           YES      YES   on | off | dir | sa
+	zoned           YES      YES   on | off
+	userused@...     NO       NO   <size>
+	groupused@...    NO       NO   <size>
+	userquota@...   YES       NO   <size> | none
+	groupquota@...  YES       NO   <size> | none
+	written@<snap>   NO       NO   <size>
+
+Sizes are specified in bytes with standard units such as K, M, G, etc.
+
+User-defined properties can be specified by using a name containing a colon (:).
+
+The {user|group}{used|quota}@ properties must be appended with
+a user or group specifier of one of these forms:
+    POSIX name      (eg: "matt")
+    POSIX id        (eg: "126829")
+    SMB name@domain (eg: "matt@sun")
+    SMB SID         (eg: "S-1-234-567-89")
+[root@localhost ~]# zfs get mount point opt[C[C[C[C[C[C[1P[C[C[C[C[1@=[1@/[1P[1P[C= opt/ opto optp optt opt
+bad property list: invalid property 'mountpoint=/opt'
+usage:
+	get [-rHp] [-d max] [-o "all" | field[,...]]
+	    [-t type[,...]] [-s source[,...]]
+	    <"all" | property[,...]> [filesystem|volume|snapshot|bookmark] ...
+
+The following properties are supported:
+
+	PROPERTY       EDIT  INHERIT   VALUES
+
+	available        NO       NO   <size>
+	clones           NO       NO   <dataset>[,...]
+	compressratio    NO       NO   <1.00x or higher if compressed>
+	createtxg        NO       NO   <uint64>
+	creation         NO       NO   <date>
+	defer_destroy    NO       NO   yes | no
+	filesystem_count  NO       NO   <count>
+	guid             NO       NO   <uint64>
+	logicalreferenced  NO       NO   <size>
+	logicalused      NO       NO   <size>
+	mounted          NO       NO   yes | no
+	origin           NO       NO   <snapshot>
+	receive_resume_token  NO       NO   <string token>
+	refcompressratio  NO       NO   <1.00x or higher if compressed>
+	referenced       NO       NO   <size>
+	snapshot_count   NO       NO   <count>
+	type             NO       NO   filesystem | volume | snapshot | bookmark
+	used             NO       NO   <size>
+	usedbychildren   NO       NO   <size>
+	usedbydataset    NO       NO   <size>
+	usedbyrefreservation  NO       NO   <size>
+	usedbysnapshots  NO       NO   <size>
+	userrefs         NO       NO   <count>
+	written          NO       NO   <size>
+	aclinherit      YES      YES   discard | noallow | restricted | passthrough | passthrough-x
+	acltype         YES      YES   noacl | posixacl
+	atime           YES      YES   on | off
+	canmount        YES       NO   on | off | noauto
+	casesensitivity  NO      YES   sensitive | insensitive | mixed
+	checksum        YES      YES   on | off | fletcher2 | fletcher4 | sha256 | sha512 | skein | edonr
+	compression     YES      YES   on | off | lzjb | gzip | gzip-[1-9] | zle | lz4
+	context         YES       NO   <selinux context>
+	copies          YES      YES   1 | 2 | 3
+	dedup           YES      YES   on | off | verify | sha256[,verify], sha512[,verify], skein[,verify], edonr,verify
+	defcontext      YES       NO   <selinux defcontext>
+	devices         YES      YES   on | off
+	dnodesize       YES      YES   legacy | auto | 1k | 2k | 4k | 8k | 16k
+	exec            YES      YES   on | off
+	filesystem_limit YES       NO   <count> | none
+	fscontext       YES       NO   <selinux fscontext>
+	logbias         YES      YES   latency | throughput
+	mlslabel        YES      YES   <sensitivity label>
+	mountpoint      YES      YES   <path> | legacy | none
+	nbmand          YES      YES   on | off
+	normalization    NO      YES   none | formC | formD | formKC | formKD
+	overlay         YES      YES   on | off
+	primarycache    YES      YES   all | none | metadata
+	quota           YES       NO   <size> | none
+	readonly        YES      YES   on | off
+	recordsize      YES      YES   512 to 1M, power of 2
+	redundant_metadata YES      YES   all | most
+	refquota        YES       NO   <size> | none
+	refreservation  YES       NO   <size> | none
+	relatime        YES      YES   on | off
+	reservation     YES       NO   <size> | none
+	rootcontext     YES       NO   <selinux rootcontext>
+	secondarycache  YES      YES   all | none | metadata
+	setuid          YES      YES   on | off
+	sharenfs        YES      YES   on | off | share(1M) options
+	sharesmb        YES      YES   on | off | sharemgr(1M) options
+	snapdev         YES      YES   hidden | visible
+	snapdir         YES      YES   hidden | visible
+	snapshot_limit  YES       NO   <count> | none
+	sync            YES      YES   standard | always | disabled
+	utf8only         NO      YES   on | off
+	version         YES       NO   1 | 2 | 3 | 4 | 5 | current
+	volblocksize     NO      YES   512 to 128k, power of 2
+	volmode         YES      YES   default | full | geom | dev | none
+	volsize         YES       NO   <size>
+	vscan           YES      YES   on | off
+	xattr           YES      YES   on | off | dir | sa
+	zoned           YES      YES   on | off
+	userused@...     NO       NO   <size>
+	groupused@...    NO       NO   <size>
+	userquota@...   YES       NO   <size> | none
+	groupquota@...  YES       NO   <size> | none
+	written@<snap>   NO       NO   <size>
+
+Sizes are specified in bytes with standard units such as K, M, G, etc.
+
+User-defined properties can be specified by using a name containing a colon (:).
+
+The {user|group}{used|quota}@ properties must be appended with
+a user or group specifier of one of these forms:
+    POSIX name      (eg: "matt")
+    POSIX id        (eg: "126829")
+    SMB name@domain (eg: "matt@sun")
+    SMB SID         (eg: "S-1-234-567-89")
+[root@localhost ~]# zfs get mountpoint=/opt opt[C/opt
+bad property list: invalid property 'mountpoint=/opt'
+usage:
+	get [-rHp] [-d max] [-o "all" | field[,...]]
+	    [-t type[,...]] [-s source[,...]]
+	    <"all" | property[,...]> [filesystem|volume|snapshot|bookmark] ...
+
+The following properties are supported:
+
+	PROPERTY       EDIT  INHERIT   VALUES
+
+	available        NO       NO   <size>
+	clones           NO       NO   <dataset>[,...]
+	compressratio    NO       NO   <1.00x or higher if compressed>
+	createtxg        NO       NO   <uint64>
+	creation         NO       NO   <date>
+	defer_destroy    NO       NO   yes | no
+	filesystem_count  NO       NO   <count>
+	guid             NO       NO   <uint64>
+	logicalreferenced  NO       NO   <size>
+	logicalused      NO       NO   <size>
+	mounted          NO       NO   yes | no
+	origin           NO       NO   <snapshot>
+	receive_resume_token  NO       NO   <string token>
+	refcompressratio  NO       NO   <1.00x or higher if compressed>
+	referenced       NO       NO   <size>
+	snapshot_count   NO       NO   <count>
+	type             NO       NO   filesystem | volume | snapshot | bookmark
+	used             NO       NO   <size>
+	usedbychildren   NO       NO   <size>
+	usedbydataset    NO       NO   <size>
+	usedbyrefreservation  NO       NO   <size>
+	usedbysnapshots  NO       NO   <size>
+	userrefs         NO       NO   <count>
+	written          NO       NO   <size>
+	aclinherit      YES      YES   discard | noallow | restricted | passthrough | passthrough-x
+	acltype         YES      YES   noacl | posixacl
+	atime           YES      YES   on | off
+	canmount        YES       NO   on | off | noauto
+	casesensitivity  NO      YES   sensitive | insensitive | mixed
+	checksum        YES      YES   on | off | fletcher2 | fletcher4 | sha256 | sha512 | skein | edonr
+	compression     YES      YES   on | off | lzjb | gzip | gzip-[1-9] | zle | lz4
+	context         YES       NO   <selinux context>
+	copies          YES      YES   1 | 2 | 3
+	dedup           YES      YES   on | off | verify | sha256[,verify], sha512[,verify], skein[,verify], edonr,verify
+	defcontext      YES       NO   <selinux defcontext>
+	devices         YES      YES   on | off
+	dnodesize       YES      YES   legacy | auto | 1k | 2k | 4k | 8k | 16k
+	exec            YES      YES   on | off
+	filesystem_limit YES       NO   <count> | none
+	fscontext       YES       NO   <selinux fscontext>
+	logbias         YES      YES   latency | throughput
+	mlslabel        YES      YES   <sensitivity label>
+	mountpoint      YES      YES   <path> | legacy | none
+	nbmand          YES      YES   on | off
+	normalization    NO      YES   none | formC | formD | formKC | formKD
+	overlay         YES      YES   on | off
+	primarycache    YES      YES   all | none | metadata
+	quota           YES       NO   <size> | none
+	readonly        YES      YES   on | off
+	recordsize      YES      YES   512 to 1M, power of 2
+	redundant_metadata YES      YES   all | most
+	refquota        YES       NO   <size> | none
+	refreservation  YES       NO   <size> | none
+	relatime        YES      YES   on | off
+	reservation     YES       NO   <size> | none
+	rootcontext     YES       NO   <selinux rootcontext>
+	secondarycache  YES      YES   all | none | metadata
+	setuid          YES      YES   on | off
+	sharenfs        YES      YES   on | off | share(1M) options
+	sharesmb        YES      YES   on | off | sharemgr(1M) options
+	snapdev         YES      YES   hidden | visible
+	snapdir         YES      YES   hidden | visible
+	snapshot_limit  YES       NO   <count> | none
+	sync            YES      YES   standard | always | disabled
+	utf8only         NO      YES   on | off
+	version         YES       NO   1 | 2 | 3 | 4 | 5 | current
+	volblocksize     NO      YES   512 to 128k, power of 2
+	volmode         YES      YES   default | full | geom | dev | none
+	volsize         YES       NO   <size>
+	vscan           YES      YES   on | off
+	xattr           YES      YES   on | off | dir | sa
+	zoned           YES      YES   on | off
+	userused@...     NO       NO   <size>
+	groupused@...    NO       NO   <size>
+	userquota@...   YES       NO   <size> | none
+	groupquota@...  YES       NO   <size> | none
+	written@<snap>   NO       NO   <size>
+
+Sizes are specified in bytes with standard units such as K, M, G, etc.
+
+User-defined properties can be specified by using a name containing a colon (:).
+
+The {user|group}{used|quota}@ properties must be appended with
+a user or group specifier of one of
