@@ -4,7 +4,7 @@ After=network.target
 
 [Service] 
 Type=simple
-PIDFile=/opt/atlassian/jira-17.06/work/catalina.pid
+PIDFile=/opt/atlassian/jira-17.06/bin/catalina.pid
 ExecStart=/opt/atlassian/jira-17.06/bin/start-jira.sh
 ExecStop=/opt/atlassian/jira-17.06/bin/stop-jira.sh
 
