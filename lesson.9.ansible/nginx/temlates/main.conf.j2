@@ -1,0 +1,17 @@
+server {
+    listen       {{ port_8080 }};
+    server_name  {{ server_name }};
+
+    access_log  /var/log/nginx/{{ server_name }}.access.log  main;
+
+    location / {
+        root   {{ web_path_nginx }};
+        index  index.html index.htm;
+    }
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   {{ web_path_nginx }};
+    }
+
+}

@@ -1,0 +1,8 @@
+---
+become: True
+tasks:
+  - name: nginx
+   hosts: all
+   become: True
+   roles: 
+     - nginx

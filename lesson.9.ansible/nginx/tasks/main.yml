@@ -1,0 +1,36 @@
+---
+become: true
+task:
+ - name: copy repo file
+   file:
+    src: file/nginx.repo
+    dest: {{ path_repo }}
+  notify: yum update
+tags: 
+  - repo_add
+
+  tasks:
+ - name: install nginx
+   yum:
+     name: 
+      nginx      
+     state: latest
+     when: 
+       hosts: host1
+ tags: 
+  - install
+  - nginx
+
+ - name: new conf file
+   template:
+     src: /home/otus/ansible/nginx/templates/nginx.cong.j2
+     dest: /ets/nginx/conf.d/default.conf
+     owner: root
+     group: root
+     mode: 0644
+   notify: restart nginx
+ tags:
+   - config
+   - nginx-config
+    when: 
+       hosts: host1 
