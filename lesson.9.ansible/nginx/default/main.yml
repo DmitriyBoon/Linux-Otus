@@ -1,5 +1,0 @@
----
-port_8080: 8080
-server_name: nginx.local
-web_path_nginx: /var/www/html/otus_lesson/
-path_repo: /etc/yum.repos.d/nginx.repo

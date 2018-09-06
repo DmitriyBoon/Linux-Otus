@@ -1,8 +1,5 @@
----
-become: True
-tasks:
-  - name: nginx
+ - name: nginx
    hosts: all
-   become: True
+   sudo: true
    roles: 
      - nginx

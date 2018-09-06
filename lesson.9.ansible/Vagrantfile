@@ -4,11 +4,11 @@
 MACHINES = {
   :host1 => {
         :box_name => "centos/7",
-        :ip_addr => '10.1.2.2'
+        :ip_addr => '192.168.12.150'
   },
   :host2 => {
         :box_name => "centos/7",
-        :ip_addr => '10.1.2.3'
+        :ip_addr => '192.168.12.151'
   }
 }
 
@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
             mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
             sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
             systemctl restart sshd
-                    
+            yum install epel-release -y
           SHELL
 
           box.vm.provision "ansible" do |ansible|
@@ -48,4 +48,3 @@ Vagrant.configure("2") do |config|
       end
   end
 end
-
