@@ -43,7 +43,7 @@ user-for-admin ALL=(ALL) NOPASSWD: ALL
 ```
 useradd -m -G root user
 затем, нужно изменить группу в /etc/passwd
-user:\x:0:0::/home/user:/bin/bash
+user:x:0:0::/home/user:/bin/bash
 ```
 или
 ```
