@@ -48,6 +48,7 @@ session    include	postlogin
 так user-for-admin ALL(ALL:ALL) ALL или 
 user-for-admin ALL=(ALL) NOPASSWD: ALL
 ```
+из пользователя деляем sudo -s или sudo -i
 
 или добавитьв группу root
 ```
@@ -61,4 +62,3 @@ cap_sys_admin user > /etc/security/capability.conf
 
 auth     optional     pam_cap.so"  добавляем в  /etc/pam.d/su
 ```
-делаем su user 
