@@ -8,7 +8,7 @@
 user-for-admin ALL=(ALL) NOPASSWD: ALL
 разные опции
 
-или добавитьв групп root
+или добавитьв группу root
 
 useradd -m -G root user
 затем, нужно изменить группу в /etc/passwd
