@@ -61,3 +61,4 @@ cap_sys_admin user > /etc/security/capability.conf
 
 auth     optional     pam_cap.so"  добавляем в  /etc/pam.d/su
 ```
+делаем su user 
