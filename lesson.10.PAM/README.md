@@ -4,20 +4,30 @@
 будни (понедельник – пятница) с 8 00 до 17 00. 
 
 добавляем pam_time.so в /etc/pam.d/sshd
-
-```auth required /lib/security/pam_env.so
-auth sufficient /lib/security/pam_unix.so likeauth nullok
-auth required /lib/security/pam_deny.so
-account required /lib/security/pam_unix.so
-account required /lib/security/pam_time.so
-account sufficient /lib/security/pam_succeed_if.so uid< 100 quiet
-account required /lib/security/pam_permit.so
-password requisite /lib/security/pam_cracklib.so retry=3
-password sufficient /lib/security/pam_unix.so nullok use_authtok md5 shadow
-password required /lib/security/pam_deny.so
-session required /lib/security/pam_limits.so
-session required /lib/security/pam_unix.so
 ```
+account required /usr/lib64/security/pam_time.so
+auth	   required     pam_sepermit.so
+auth	   substack     password-auth
+auth	   include	postlogin
+# Used with polkit to reauthorize users in remote sessions
+-auth	   optional     pam_reauthorize.so prepare
+account    required     pam_nologin.so
+account required pam_time.so
+account    include	password-auth
+password   include	password-auth
+# pam_selinux.so close should be the first session rule
+session    required     pam_selinux.so close
+session    required     pam_loginuid.so
+# pam_selinux.so open should only be followed by sessions to be executed in the user context
+session    required     pam_selinux.so open env_params
+session    required     pam_namespace.so
+session    optional     pam_keyinit.so force revoke
+session    include	password-auth
+session    include	postlogin
+# Used with polkit to reauthorize users in remote sessions
+-session   optional     pam_reauthorize.so prepare
+```
+
 редактируем /etc/security/time.conf
 
 ```
