@@ -49,5 +49,5 @@ user:\x:0:0::/home/user:/bin/bash
 ```
 cap_sys_admin user > /etc/security/capability.conf
 
-auth     optional     pam_cap.so"  добавляем в начало /etc/pam.d/su
+auth     optional     pam_cap.so"  добавляем в  /etc/pam.d/su
 ```
