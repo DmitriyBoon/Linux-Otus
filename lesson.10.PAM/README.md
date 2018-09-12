@@ -37,7 +37,6 @@ session required /lib/security/pam_unix.so
 так user-for-admin ALL(ALL:ALL) ALL или 
 user-for-admin ALL=(ALL) NOPASSWD: ALL
 ```
-разные опции
 
 или добавитьв группу root
 ```
