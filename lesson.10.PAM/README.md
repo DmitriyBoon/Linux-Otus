@@ -12,7 +12,7 @@ auth	   include	postlogin
 # Used with polkit to reauthorize users in remote sessions
 -auth	   optional     pam_reauthorize.so prepare
 account    required     pam_nologin.so
-account required pam_time.so
+*account    required     pam_time.so*
 account    include	password-auth
 password   include	password-auth
 # pam_selinux.so close should be the first session rule
