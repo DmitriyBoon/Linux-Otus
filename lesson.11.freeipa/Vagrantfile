@@ -1,0 +1,57 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+config.vm.define "freeipa" do |freeipa|
+      freeipa.vm.box = "centos/7"
+      freeipa.vm.network  "public_network", ip: "192.168.1.160"
+      freeipa.vm.hostname = "freeipa"  
+      freeipa.vm.provider "virtualbox" do |vb|
+         vb.memory = "1024"
+         freeipa.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         systemctl restart sshd
+         yum install epel-release -y 
+         yum update -y
+         yum install ansible -y
+         yum -y install ipa-server ipa-server-dns bind bind-dyndb-ldap
+         firewall-cmd --permanent --zone=public --add-service={ntp,http,https,ldap,ldaps,kerberos,kpasswd,dns}
+         firewall-cmd --permanent --zone=public --add-port=53/tcp
+         firewall-cmd --permanent --zone=public --add-port=53/udp
+         firewall-cmd --reload
+         SHELL
+        end
+  end
+end
+
+Vagrant.configure(2) do |config|
+ config.vm.define "client_centos" do |client_centos|
+     client_centos.vm.box = "centos/7"   
+     client_centos.vm.network "public_network", ip: "192.168.1.161"
+     client_centos.vm.hostname = "client-centos"  
+     client_centos.vm.provider "virtualbox" do |vb|
+         vb.memory = "1024"
+     client_centos.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         systemctl restart sshd
+         yum install epel-release -y 
+         yum update -y
+         yum install freeipa-client
+         ipa-client-install --mkhomedir
+          SHELL
+     end
+ end
+end
+
+Vagrant.configure(2) do |config|
+config.vm.define "client_debian" do |client_debian|
+     client_debian.vm.box = "debian/contrib-stretch64"
+     client_debian.vm.network "public_network", ip: "192.168.1.162"
+     client_debian.vm.hostname = "client-debian"  
+     client_debian.vm.provider "virtualbox" do |vb|
+         vb.memory = "1024"
+     end
+ end
+end 
