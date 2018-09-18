@@ -16,10 +16,6 @@ config.vm.define "freeipa" do |freeipa|
          yum update -y
          yum install ansible -y
          yum -y install ipa-server ipa-server-dns bind bind-dyndb-ldap
-         firewall-cmd --permanent --zone=public --add-service={ntp,http,https,ldap,ldaps,kerberos,kpasswd,dns}
-         firewall-cmd --permanent --zone=public --add-port=53/tcp
-         firewall-cmd --permanent --zone=public --add-port=53/udp
-         firewall-cmd --reload
          SHELL
         end
   end
@@ -39,7 +35,6 @@ Vagrant.configure(2) do |config|
          yum install epel-release -y 
          yum update -y
          yum install freeipa-client
-         ipa-client-install --mkhomedir
           SHELL
      end
  end
