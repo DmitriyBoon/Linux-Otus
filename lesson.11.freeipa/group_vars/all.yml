@@ -1,0 +1,38 @@
+---
+#server FreeIPA variables
+freeipaserver_ip: 192.168.100.160
+freeipaserver_hostname: freeipa.lesson.loc
+
+domain: lesson.loc
+nameserver_ip: 8.8.8.8
+gateway_ip: 192.168.100.1
+server_password: OtusOtus123
+realm: LESSON.LOC
+directory_manager_password: OtusOtus123
+
+ipa_admin: admin
+ipa_pass: Otus123Otus123
+ipa_server_name: freeipa,lesson.loc
+ipa_server_ip: 192.168.100.160
+ipa_realm: LESSON.LOC
+
+#client FreeIPA variables
+client_hostname: cl.lesson.loc
+client_address: 192.168.100.161
+#client connection
+principal_user: admin
+principal_password: OtusOtus123
+principal_user_password: Otus123Otus123
+
+
+dns_forwarder_1: 192.168.100.160
+dns_forwarder_2: 8.8.8.8
+
+#client /etc/sudo-ldap.conf variables
+dc1: lesson
+dc0: loc
+tls_cacertfile_path: /etc/ipa/ca.crt
+uri_LDAP: ldaps://dc.lesson.loc
+uri_LDAP: ldapi://%2fvar%2frun%2fslapd-LESSON-LOC.socket
+
+

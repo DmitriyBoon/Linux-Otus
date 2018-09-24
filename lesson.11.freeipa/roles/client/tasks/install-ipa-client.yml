@@ -1,0 +1,11 @@
+---
+- name: Install ipa-server packages
+  yum: name={{ item }} state=present
+  with_items:
+   - ipa-client
+  
+- name: Run the IPA Client installer
+  command:  ipa-client-install --force-join --domain {{ domain }} --principal {{ ipa_admin }}@{{ ipa_realm }} --password {{ ipa_pass }} --server {{ ipa_server_name }}.{{ domain }} --mkhomedir --realm {{ ipa_realm }} -U
+
+        
+    

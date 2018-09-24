@@ -1,0 +1,48 @@
+---
+
+- name: Install IPA clients
+  hosts: 
+    - cl
+
+  become: true
+  
+  vars:
+    domain: "lesson.loc"
+    ipa_admin: "admin"
+    ipa_pass: "Otus123Otus123"
+    ipa_server_name: freeipa
+    ipa_server_ip: "192.168.10.160"
+    ipa_realm: "LESSON.LOC"
+
+  tasks:
+  - name: Install Now 
+      yum:
+      name: "{{ item }}"
+      state: present
+    with_items: "ipa-client"
+
+  - name: resolv.conf configuring
+    lineinfile:
+      path: /etc/resolv.conf
+      line: "nameserver 192.168.10.160"
+  
+  - name: hosts file configuring
+    blockinfile:
+      path: /etc/hosts
+      block: |
+        {{ item.ip }} {{ item.name }}
+      with_items: 
+        - { name: "{{ ansible_hostname }}.{{ domain }}", ip: {{ client_address }} }
+        - { name: "{{ ipa_server_name }}.{{ domain }}", ip: "{{ ipa_server_ip }}" }
+  
+  - name: Run the IPA Client installer
+    shell: > 
+      ipa-client-install
+      --force-join #  Override
+      --domain {{ domain }}
+      --principal {{ ipa_admin }}@{{ ipa_realm }} 
+      --password {{ ipa_pass }}
+      --server {{ ipa_server_name }}.{{ domain }}
+      --mkhomedir
+      --realm {{ ipa_realm }} 
+      -U

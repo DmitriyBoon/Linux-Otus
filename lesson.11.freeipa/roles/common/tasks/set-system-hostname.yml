@@ -1,0 +1,4 @@
+---
+
+- name: Creates the /etc/sysconfig/network file 
+  template: src=etc-sysconfig-network.j2 dest=/etc/sysconfig/network
