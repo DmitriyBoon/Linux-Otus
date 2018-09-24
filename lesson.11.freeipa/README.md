@@ -1,5 +1,5 @@
-#Роли freeipa
-#freeipa-server
+# Роли freeipa
+# freeipa-server
 
-#freeipa-client
+# freeipa-client
 
