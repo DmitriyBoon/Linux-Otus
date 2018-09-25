@@ -1,31 +1,13 @@
 ---
 
 - hosts: all
-<<<<<<< HEAD
   become: true
-=======
-  sudo: true
->>>>>>> ae6050ab3c81816de1aaaa643072a0220e8d31a7
   user: root
   roles:
     - common
 
 - hosts: servers
-<<<<<<< HEAD
   become: true
   user: root
   roles:
   - server
-=======
-  sudo: true
-  user: root
-  roles:
-    - server
-
-
-- hosts: clients
-  sudo: true
-  user: root
-  roles:
-    - client
->>>>>>> ae6050ab3c81816de1aaaa643072a0220e8d31a7
