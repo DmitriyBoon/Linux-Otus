@@ -1,4 +1,8 @@
 ---
 - include: install-ipa-client.yml
 - include: configure-ldap.yml 
+<<<<<<< HEAD
 - include: client-enroll-ipa.yml
+=======
+# - include: client-enroll-ipa.yml
+>>>>>>> ae6050ab3c81816de1aaaa643072a0220e8d31a7

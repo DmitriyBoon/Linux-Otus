@@ -1,4 +1,8 @@
 [servers]
 freeipa ansible_host=192.168.100.160 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+<<<<<<< HEAD
 [client]
 client ansible_host=192.168.100.161 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+=======
+#client ansible_host=192.168.100.161 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+>>>>>>> ae6050ab3c81816de1aaaa643072a0220e8d31a7

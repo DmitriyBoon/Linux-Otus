@@ -1,0 +1,12 @@
+- hosts: all
+  sudo: true
+  user: root
+  roles:
+    - common
+
+
+- hosts: all
+  sudo: true
+  user: root
+  roles:
+    - client

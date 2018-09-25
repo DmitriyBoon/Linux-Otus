@@ -4,6 +4,11 @@
   with_items:
    - ipa-client
   
+<<<<<<< HEAD
+=======
+- name: Run the IPA Client installer
+  command:  ipa-client-install --force-join --domain {{ domain }} --principal {{ ipa_admin }}@{{ ipa_realm }} --password {{ ipa_pass }} --server {{ ipa_server_name }}.{{ domain }} --mkhomedir --realm {{ ipa_realm }} -U
+>>>>>>> ae6050ab3c81816de1aaaa643072a0220e8d31a7
 
         
     
