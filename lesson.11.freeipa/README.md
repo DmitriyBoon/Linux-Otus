@@ -14,3 +14,6 @@ Client - установка и настройка клиента
 Установка и настройка сервера ansible-playbook freeipa-server.yml
 Уставнока клиентов и настройка клиентов ansible-playbook freeipa-client.yml
 ```
+
+
+p.s. роль еще тестируется на разных платформах
