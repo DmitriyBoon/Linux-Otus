@@ -5,7 +5,7 @@
     - common
 
 
-- hosts: all
+- hosts: client
   become: true
   user: root
   roles:
