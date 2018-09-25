@@ -1,0 +1,4 @@
+---
+  - name: Setup FreeIPA server
+  command: ipa-server-install -U --setup-dns --hostname={{ freeipaserver_hostname }} --domain={{ domain }} --realm={{ realm }} --ds-password={{ directory_manager_password }} --admin-password={{ principal_user_password }} --forwarder={{ dns_forwarder_2 }}
+

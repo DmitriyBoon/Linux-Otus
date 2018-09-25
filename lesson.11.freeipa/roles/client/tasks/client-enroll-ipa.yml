@@ -1,0 +1,4 @@
+---
+
+ - name: Enroll IPA client to IPA server unattended
+   command: ipa-client-install --force-join --domain {{ domain }} --principal {{ ipa_admin }}@{{ realm }} --password {{ ipa_pass }} --server {{ ipa_server_name }} --mkhomedir --realm {{ realm }} -U

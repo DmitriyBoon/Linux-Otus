@@ -1,0 +1,60 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+config.vm.define "freeipa" do |freeipa|
+      freeipa.vm.box = "centos/7"
+      freeipa.vm.network  "public_network", ip: "192.168.100.160"
+      freeipa.vm.hostname = "freeipa.lesson.loc"  
+      freeipa.vm.provider "virtualbox" do |vb|
+         vb.memory = "1024"
+         freeipa.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         systemctl restart sshd
+         yum install epel-release -y 
+         yum update -y
+         yum install ansible mc -y
+        #  cp -rf /vagrant/ansible/* /etc/ansible/
+        #  ansible-playbook /etc/ansible/freeipa-server.yml
+         SHELL
+        end
+  end
+end
+
+Vagrant.configure(2) do |config|
+ config.vm.define "client_centos" do |client_centos|
+     client_centos.vm.box = "centos/7"   
+     client_centos.vm.network "public_network", ip: "192.168.100.161"
+     client_centos.vm.hostname = "cl.lesson.loc"  
+     client_centos.vm.provider "virtualbox" do |vb|
+         vb.memory = "1024"
+     client_centos.vm.provision "shell", inline: <<-SHELL
+         mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+         sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+         systemctl restart sshd
+         yum install epel-release -y 
+         yum update -y
+          SHELL
+     end
+ end
+end
+
+# Vagrant.configure(2) do |config|
+# config.vm.define "client_debian" do |client_debian|
+#      client_debian.vm.box = "debian/contrib-stretch64"
+#      client_debian.vm.network "public_network", ip: "192.168.1.162"
+#      client_debian.vm.hostname = "client-debian"  
+#      client_debian.vm.provider "virtualbox" do |vb|
+#          vb.memory = "1024"
+#          client_debian.vm.provision "shell", inline: <<-SHELL
+#          mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+#          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+#          systemctl restart sshd
+#          echo  'deb http://ftp.ru.debian.org/debian sid main'  >> /etc/apt/sources.list
+#          apt update -y
+#          apt install freeipa-client -y
+#          SHELL
+#         end
+#  end
+# end 

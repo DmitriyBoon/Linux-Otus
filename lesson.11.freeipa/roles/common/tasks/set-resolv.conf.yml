@@ -1,0 +1,4 @@
+---
+
+- name: Creates the /etc/resolv.conf file 
+  template: src=etc-resolv.conf.j2 dest=/etc/resolv.conf

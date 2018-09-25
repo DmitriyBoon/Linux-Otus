@@ -1,0 +1,8 @@
+---
+
+- include: set-system-hostname.yml
+- include: set-hosts.yml
+- include: set-resolv.conf.yml
+- include: set-ifcfg-eth0.yml
+
+

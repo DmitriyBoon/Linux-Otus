@@ -1,0 +1,15 @@
+---
+
+- name: Configure LDAP binding for the sudo lookup
+  lineinfile: "dest=/etc/sudo-ldap.conf regexp='{{ item }}' insertafter=EOF line='{{ item }}'"
+  with_items:
+    - binddn
+    - uid=sudo,cn=sysaccounts,cn=etc,dc={{ dc1 }},dc={{ dc0 }}
+    - bindpw {{ password }} 
+    - ssl start_tls
+    - tls_cacertfile {{ tls_cacertfile_path }}
+    - tls_checkpeer yes
+    - uri {{ uri_LDAP }}
+    - sudoers_base ou=SUDOers,dc={{ dc1 }},dc={{ dc0 }}
+    - bind_timelimit 5
+    - timelimit 10

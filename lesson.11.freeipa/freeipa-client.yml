@@ -1,0 +1,12 @@
+- hosts: all
+  become: true
+  user: root
+  roles:
+    - common
+
+
+- hosts: client
+  become: true
+  user: root
+  roles:
+    - client

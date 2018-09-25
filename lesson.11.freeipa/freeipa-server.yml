@@ -1,0 +1,13 @@
+---
+
+- hosts: all
+  become: true
+  user: root
+  roles:
+    - common
+
+- hosts: servers
+  become: true
+  user: root
+  roles:
+  - server

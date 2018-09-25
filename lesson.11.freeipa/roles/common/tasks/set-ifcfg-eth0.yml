@@ -1,0 +1,4 @@
+---
+
+- name: Creates the /etc/sysconfig/network-scrips/ifcfg-eth0 file 
+  template: src=etc-sysconfig-network-scripts-ifcfg-eth1.j2 dest=/etc/sysconfig/network-scripts/ifcfg-eth0

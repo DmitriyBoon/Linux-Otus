@@ -1,0 +1,10 @@
+DEVICE=eth0
+BOOTPROTO=none
+IPV6INIT=no
+MTU=1500
+ONBOOT=yes
+TYPE=Ethernet
+IPADDR={{ ansible_default_ipv4.address }}
+NETMASK={{ ansible_default_ipv4.netmask }}
+GATEWAY={{ ansible_default_ipv4.gateway }}
+USERCTL=no
