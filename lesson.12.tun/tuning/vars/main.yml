@@ -1,0 +1,20 @@
+---
+package_list:
+  - htop
+  - telnet
+  - nmap
+  - vim
+  - yum-utils
+  - ntp
+  - wget
+  - iotop
+  - iftop
+  - sysstat
+  - ltrace
+  - strace
+  - lsof
+  - tcpdump
+  - curl
+  - rsync
+  - mc
+  - zip  

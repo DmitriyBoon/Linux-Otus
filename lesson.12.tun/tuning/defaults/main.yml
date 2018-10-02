@@ -1,0 +1,9 @@
+---
+# for sysct.conf
+swapiness: 1
+somaxconn: 50000
+synbacklog: 30000
+maxbacklog: 5000
+filemax: 100000
+ipforwarding: 0
+allforwarding: 0

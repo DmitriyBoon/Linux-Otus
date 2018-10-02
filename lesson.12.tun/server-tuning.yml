@@ -1,0 +1,15 @@
+- name: Linux server tuning
+  hosts: all
+  become: True
+  roles:
+    - tuning
+
+    
+
+          
+
+
+  
+
+  
+  

@@ -1,0 +1,48 @@
+---
+- name: Install from epel-release
+  yum:
+    name: epel-release
+    state: latest
+  tags:
+    - epel
+
+- name: Install common packages
+  yum:
+    name: "{{ item }}" 
+    state: latest
+  with_items: "{{ package_list }}"
+  tags: 
+    - packages
+  
+- name: updates all after install
+  yum:
+    name: '*'
+    state: latest
+  tags:
+    - update
+    - install
+
+- name: ntp conf
+  template:
+    src: ntp.conf.j2
+    dest: /etc/ntp.conf
+  tags:
+    - ntp
+  notify:
+    - start ntp
+  
+- name: Set timezone to Europe/Moscow
+  timezone:
+    name: Europe/Moscow
+  tags:
+    - timezone
+
+- name: sysctl config
+  template:
+    src: sysctl.conf.j2
+    dest: /etc/sysctl.conf
+  tags:
+    - sysctl
+  notify:
+    - reload sysctl
+
