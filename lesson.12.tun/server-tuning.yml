@@ -2,14 +2,4 @@
   hosts: all
   become: True
   roles:
-    - tuning
-
-    
-
-          
-
-
-  
-
-  
-  
+    - tuning  
