@@ -12,12 +12,12 @@ directory_manager_password: OtusOtus123
 
 ipa_admin: admin
 ipa_pass: Otus123Otus123
-ipa_server_name: freeipa,lesson.loc
+ipa_server_name: freeipa.lesson.loc
 ipa_server_ip: 192.168.100.160
 ipa_realm: LESSON.LOC
 
 #client FreeIPA variables
-client_hostname: cl.lesson.loc
+client_hostname: client.lesson.loc
 client_address: 192.168.100.161
 #client connection
 principal_user: admin
@@ -34,5 +34,4 @@ dc0: loc
 tls_cacertfile_path: /etc/ipa/ca.crt
 uri_LDAP: ldaps://dc.lesson.loc
 uri_LDAP: ldapi://%2fvar%2frun%2fslapd-LESSON-LOC.socket
-
 
