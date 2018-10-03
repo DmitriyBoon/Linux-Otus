@@ -1,0 +1,6 @@
+---
+- name: install rsyslog client for graylog
+  hosts: all
+  become: True
+  roles:
+    - rsyslog  

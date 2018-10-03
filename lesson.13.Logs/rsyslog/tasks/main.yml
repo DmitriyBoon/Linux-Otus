@@ -1,0 +1,9 @@
+---
+- name: rsyslog conf
+  template:
+    src: 90-graylog.conf.j2
+    dest: /etc/rsyslog.d/
+  tags:
+    - rsyslog
+  notify:
+    - restart rsyslog

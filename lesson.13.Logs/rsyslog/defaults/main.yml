@@ -1,0 +1,6 @@
+---
+rsyslog_all_facility: *.*  
+udp_rsyslog: @
+graylog_server: 192.168.10.143
+graylog_port: 1514
+graylog_log_format: RSYSLOG_TraditionalFileFormat
