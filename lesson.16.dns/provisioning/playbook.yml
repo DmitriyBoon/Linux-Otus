@@ -16,7 +16,7 @@
 - hosts: ns01
   become: yes
   tasks:
-  - name: copy named.conf
+  - name: copy config
     copy: src=master-named.conf dest=/etc/named.conf owner=root group=named mode=0640
   - name: copy zones
     copy: src={{ item }} dest=/etc/named/ owner=root group=named mode=0660
