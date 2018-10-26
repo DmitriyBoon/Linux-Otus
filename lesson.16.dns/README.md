@@ -8,3 +8,6 @@
   * client (192.168.50.15 and 192.168.50.16)
     * used to test the env, runs rndc and nsupdate
   * zone transfer: TSIG key
+ # SELinux 
+ 
+ 
