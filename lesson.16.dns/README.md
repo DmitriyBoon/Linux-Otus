@@ -1,4 +1,3 @@
-# Vagrant DNS Lab
 # Lesson DNS Otus
   * zones: dns.lab, reverse dns.lab and ddns.lab 
     *  add new zone newdns.lab
