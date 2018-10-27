@@ -17,15 +17,18 @@
  restorecon -R -v /etc/named  
  setsebool -P named_write_master_zones 1 
  
- Добавим в playbook на мастер
+ Добавим в playbook на ns01
  
 - name: selinux change rule
   shell: semanage fcontext -a -e /var/named /etc/named && restorecon -R -v /etc/named && setsebool -P named_write_master_zones 1
  ```
  * Инструкция
-   * Переходим в /etc/ansible/ 
+   * vagrant up
+   * vagrant ssh ns01
+   * sudo -i
+   * cd /etc/ansible/ 
    * rm -rf host && cp provisioning/hosts.txt hosts
-   * запускаем ansible-playbook provisioning/playbook.yml
+   * ansible-playbook provisioning/playbook.yml
    * При запуске на Linux, Mac, etc. снимаем комметарий в вагранте.
    
     
