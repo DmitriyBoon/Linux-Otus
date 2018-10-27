@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
   config.vm.define "ns01" do |ns01|
     ns01.vm.network "private_network", ip: "192.168.50.10", virtualbox__intnet: "dns"
     ns01.vm.hostname = "ns01"
-  config.vm.provision "shell", inline: <<-SHELL
+    ns01.vm.provision "shell", inline: <<-SHELL
     mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
     sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     systemctl restart sshd
@@ -30,7 +30,7 @@ Vagrant.configure(2) do |config|
   config.vm.define "ns02" do |ns02|
     ns02.vm.network "private_network", ip: "192.168.50.11", virtualbox__intnet: "dns"
     ns02.vm.hostname = "ns02"
-  config.vm.provision "shell", inline: <<-SHELL
+    ns02.vm.provision "shell", inline: <<-SHELL
   mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
   sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
   systemctl restart sshd
@@ -40,7 +40,7 @@ end
   config.vm.define "client1" do |client1|
     client1.vm.network "private_network", ip: "192.168.50.15", virtualbox__intnet: "dns"
     client1.vm.hostname = "client1"
-  config.vm.provision "shell", inline: <<-SHELL
+    client1.vm.provision "shell", inline: <<-SHELL
   mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
   sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
   systemctl restart sshd
@@ -49,7 +49,7 @@ end
   config.vm.define "client2" do |client2|
     client2.vm.network "private_network", ip: "192.168.50.16", virtualbox__intnet: "dns"
     client2.vm.hostname = "client2"
-  config.vm.provision "shell", inline: <<-SHELL
+    client2.vm.provision "shell", inline: <<-SHELL
   mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
   sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
   systemctl restart sshd

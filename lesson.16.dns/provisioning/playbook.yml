@@ -16,7 +16,7 @@
 - hosts: ns01
   become: yes
   tasks:
-  - name: copy config
+  - name: copy named.conf
     copy: src=master-named.conf dest=/etc/named.conf owner=root group=named mode=0640
   - name: copy zones
     copy: src={{ item }} dest=/etc/named/ owner=root group=named mode=0660
@@ -31,7 +31,7 @@
 
   - name: ensure named is running and enabled
     service: name=named state=restarted enabled=yes
-
+  
   - name: selinux change rule
     shell: semanage fcontext -a -e /var/named /etc/named && restorecon -R -v /etc/named && setsebool -P named_write_master_zones 1
 
