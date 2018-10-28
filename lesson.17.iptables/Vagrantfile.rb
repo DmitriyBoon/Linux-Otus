@@ -63,6 +63,7 @@ end
   systemctl restart network
   yum install epel-release -y
   yum install nginx -y
+  service nginx start
 SHELL
 end
 end
