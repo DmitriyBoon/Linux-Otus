@@ -1,6 +1,10 @@
 # Otus netfilter
 
 
+* Инструкция knocking port
+  * knock.sh - скрипт запуска knock, перввый аргумент ip, далее порты. 
+  * yum install nmap - для запуска должен стоять nmap
+  * knockd.conf - конфиг, открываем закрываем.
 * Knock port log 
 ```
 cat /var/log/knockd.log
