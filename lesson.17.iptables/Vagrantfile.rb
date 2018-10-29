@@ -28,14 +28,12 @@ Vagrant.configure(2) do |config|
     sysctl -p
     cp /vagrant/nux-dextop.repo /etc/yum.repos.d/nux-dextop.repo
     yum install knock-server
-    # wget http://li.nux.ro/download/nux/misc/el6/i386/knock-server-0.5-7.el6.nux.i686.rpm
-    # rpm -ivh knock-server-0.5-7.el6.nux.i686.rpm
     rm -rf /etc/knockd.conf
     cp /vagrant/knockd.conf /etc/knockd.conf
-    iptables -A INPUT -p tcp --dport 22 -j DROP
-    service knock-server start
-    # cp /vagrant/iptables.knock.txt /etc/iptables.knock
-    # iptables-restore < /etc/iptables.knock
+    # iptables -A INPUT -p tcp --dport 22 -j DROP
+    service knockd  start
+    cp /vagrant/iptables.knock.txt /etc/iptables.knock
+    iptables-restore < /etc/iptables.knock
     iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
 	echo "192.168.0.0/16 via 192.168.255.1" >  /etc/sysconfig/network-scripts/route-eth1
     service network restart
