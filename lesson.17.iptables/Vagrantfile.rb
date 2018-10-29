@@ -25,7 +25,10 @@ Vagrant.configure(2) do |config|
     echo 'net.ipv4.conf.all.forwarding=1' >> /etc/sysctl.conf
     echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
     sysctl -p
-    yum install knock -y
+    wget http://li.nux.ro/download/nux/misc/el6/i386/knock-server-0.5-7.el6.nux.i686.rpm
+    rpm -ivh knock-server-0.5-7.el6.nux.i686.rpm
+    rm -rf /etc/knockd.conf
+    cp /vagrant/
     cp /vagrant/iptables.knock.txt /etc/iptables.knock
     iptables-restore < /etc/iptables.knock
     iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
