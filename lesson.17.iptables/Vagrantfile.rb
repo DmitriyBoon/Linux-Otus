@@ -21,6 +21,7 @@ Vagrant.configure(2) do |config|
     inetRouter.vm.provision "shell", inline: <<-SHELL
     mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
     sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    yum install wget -y
     systemctl restart sshd
     echo 'net.ipv4.conf.all.forwarding=1' >> /etc/sysctl.conf
     echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
@@ -29,9 +30,10 @@ Vagrant.configure(2) do |config|
     rpm -ivh knock-server-0.5-7.el6.nux.i686.rpm
     rm -rf /etc/knockd.conf
     cp /vagrant/knockd.conf /etc/knockd.conf
+    iptables -A INPUT -p tcp --dport 22 -j DROP
     service knockd  start
-    cp /vagrant/iptables.knock.txt /etc/iptables.knock
-    iptables-restore < /etc/iptables.knock
+    # cp /vagrant/iptables.knock.txt /etc/iptables.knock
+    # iptables-restore < /etc/iptables.knock
     iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
 	echo "192.168.0.0/16 via 192.168.255.1" >  /etc/sysconfig/network-scripts/route-eth1
     service network restart
