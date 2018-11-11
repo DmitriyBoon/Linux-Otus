@@ -44,12 +44,12 @@ Vagrant.configure(2) do |config|
     cp pki/issued/server.crt keys/
     cp pki/private/server.key keys/
     cp /vagrant/sert.sh /home/vagrant/sert.sh
-    cat sert.sh | tr -d '\r' > sert.sh  # убираем перевод каретки
+    cat /home/vagrant/sert.sh | tr -d '\r' > /home/vagrant/sert.sh  # убираем перевод каретки
     /home/vagrant/sert.sh
     cp /vagrant/server.conf server/
     restorecon -R -v /etc/openvpn
     systemctl start openvpn@server
-    echo 'net.ipv4.conf.all`.forwarding=1' >> /etc/sysctl.conf
+    echo 'net.ipv4.conf.all.forwarding=1' >> /etc/sysctl.conf
     echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
     sysctl -p
     SHELL
@@ -68,6 +68,7 @@ Vagrant.configure(2) do |config|
   ntpdate pool.ntp.org
   systemctl enable ntpdate
   systemctl status ntpdate
+  yum install epel-release -y
   yum install openvpn -y
   cd /etc/openvpn
   cp /vagrant/client.conf client/

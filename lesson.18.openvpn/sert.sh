@@ -1,5 +1,4 @@
 #!/bin/bash
-
 cat <<\EOT >> /root/.ssh/id_rsa
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAt+vrMSYEpoeFMzO6w9Re1ZDBr+4PjHEAZAQsrLsnpmC9IpiV
