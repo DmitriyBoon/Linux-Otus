@@ -79,6 +79,7 @@ Vagrant.configure(2) do |config|
   cp /vagrant/client.conf /etc/openvpn/
   # sshpass -p "vagrant" scp -r vagrant@192.168.255.1:/home/vagrant/client.key /etc/openvpn
   # sshpass -p "vagrant" scp -r vagrant@192.168.255.1:/home/vagrant/client.crt /etc/openvpn
+  sudo ssh-keyscan 192.168.255.1  >> /root/.ssh/known_hosts
   sshpass -p "vagrant" rsync -av vagrant@192.168.255.1:/home/vagrant/{client.crt,client.key,ca.crt} /etc/openvpn
   systemctl start openvpn@client
   SHELL
