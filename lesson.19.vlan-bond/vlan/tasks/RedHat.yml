@@ -1,0 +1,78 @@
+---
+# tasks file for bonding
+
+- name: Create the slave interfaces configuration files
+  template: src=el_ifcfg-slaves.j2 dest="{{ el_network_sysconfig }}/ifcfg-{{ item }}" backup=yes
+  with_items:
+  - "{{ slaves }}"
+  when:
+  - apply
+  tags:
+  - el
+  - bond
+
+- name: Create the bonding iface
+  template: src=el_ifcfg-bond.j2 dest="{{ el_network_sysconfig }}/ifcfg-{{ item.name }}"
+  with_items:
+  - "{{ bond }}"
+  when:
+  - apply
+  - ("{{ slaves| length }}" >=2)
+  notify: restart network
+  tags:
+  - el
+  - bond
+
+- name: Create the vlan iface
+  template: src=el_ifcfg-vlans.j2 dest="{{ el_network_sysconfig }}/ifcfg-{{ item.name }}"
+  with_items:
+  - "{{ vlans }}"
+  when:
+  - apply
+  - ("{{ slaves| length }}" >=2)
+  - v1.vlan
+  notify: restart network
+  tags:
+  - el
+  - bond
+
+- name: Apply settings NOW
+  service: name=network state=restarted
+  when:
+  - apply_now
+
+- name: Create the slave interfaces configuration files
+  template: src=el_ifcfg-slaves.j2 dest="{{ tmp_dir }}/ifcfg-{{ item }}"
+  with_items:
+  - "{{ slaves }}"
+  when:
+  - not apply
+  tags:
+  - el
+  - bond
+
+
+
+- name: Create the bonding iface
+  template: src=el_ifcfg-bond.j2 dest="{{ tmp_dir }}/ifcfg-{{ item.name }}"
+  with_items:
+  - "{{ bond }}"
+  when:
+  - not apply
+  - ("{{ slaves|length }}" >=2)
+  tags:
+  - el
+  - bond
+
+
+- name: Create the vlan iface
+  template: src=el_ifcfg-vlans.j2 dest="{{ tmp_dir }}/ifcfg-{{ item.name }}"
+  with_items:
+  - "{{ vlans }}"
+  when:
+  - not apply
+  - ("{{ slaves| length }}" >=2)
+  - v1.vlan
+  tags:
+  - el
+  - bond

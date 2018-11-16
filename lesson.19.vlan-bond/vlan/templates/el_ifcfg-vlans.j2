@@ -1,0 +1,32 @@
+{% set iface = 'ansible_' + item.name %}
+VLAN=yes
+VLAN_NAME_TYPE=VLAN_PLUS_VID_NO_PAD
+DEVICE="{{item.name}}"
+BOOTPROTO=static
+ONBOOT=yes
+PHYSDEV="{{ bond.name }}"
+#MTU="{{ mtu }}"
+NM_CONTROLLED=no 
+{%if v1.vlan %}
+{%if enable_ipv4 %}
+{% if item.ip_addr and item.netmask %}
+IPADDR="{{ item.ip_addr }}"
+NETMASK="{{ item.netmask }}"
+{% endif %}
+{% endif %}
+{%if manage_gateway %}
+{%if item.gtw is defined and v1.value %}
+GATEWAY="{{ item.gtw }}"
+{% endif %}
+{% endif %}
+{%if manage_dns_servers %}
+{%if item.gtw is defined %}
+DNS1="{{ dns1 }}"
+DNS2="{{ dns2 }}"
+{% endif %}
+{% endif %}
+{% if enable_ipv6 %}
+#IPV6INIT="{{ init_ipv6 }}"
+#IPV6_AUTOCONF="{{ ipv6_autoconf }}"
+{% endif %}
+{% endif %}

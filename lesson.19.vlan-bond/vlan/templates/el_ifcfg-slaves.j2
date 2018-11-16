@@ -1,0 +1,20 @@
+{% set iface = 'ansible_' + item %}
+DEVICE="{{ item }}"
+BOOTPROTO=none
+USERCTL=no
+ONBOOT=yes
+SLAVE=yes
+MASTER="{{ bond.name}}"
+{% if mtu is defined %}
+#MTU="{{ mtu }}"
+{% endif %}
+{% if manage_hw_addr %}
+HWADDR="{{ hostvars[inventory_hostname][iface].macaddress }}"
+{% endif %}
+NM_CONTROLLED=no
+{% if keep_slave_ipv4 %}
+{% if hostvars[inventory_hostname][iface].ipv4 %}
+IPADDR="{{ hostvars[inventory_hostname][iface].ipv4.address }}"
+NETMASK="{{ hostvars[inventory_hostname][iface].ipv4.netmask }}"
+{% endif %}
+{% endif %}

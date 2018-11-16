@@ -1,0 +1,46 @@
+auto lo
+iface lo inet loopback
+
+{%for slave in slaves %}
+auto {{ slave }}
+iface {{ slave }} inet manual
+        bond-master {{ bond.name }}
+
+{%endfor%}
+auto {{ bond.name }}
+iface {{ bond.name }} inet manual
+        bond-slaves {%for slave in slaves %} {{ slave }}  {%endfor%}
+
+        bond-miimon 100
+        bond-mode 802.3ad
+        bond-lacp-rate fast
+        bond-xmit_hash_policy layer3+4
+        pre-up /sbin/ifenslave {{ bond.name }} {%for slave in slaves %} {{ slave }}  {%endfor%}
+
+        post-down /sbin/ifenslave -d {{ bond.name }} {%for slave in slaves %} {{ slave }}  {%endfor%}
+{% if not v1.value %}
+
+	address {{ bond.ip_addr }}
+        netmask {{ bond.netmask }}
+        gateway {{ bond.gtw }}
+        dns-domain privatedns.com
+        dns-nameservers {{ dns1 }} {{ dns2 }}
+{% endif %}
+
+{%if v1.vlan %}
+
+{%for vlan in vlans %}
+auto {{ vlan.name }}
+iface {{ vlan.name }} inet static
+	address {{ vlan.ip_addr }}
+        netmask {{ vlan.netmask }}
+        vlan_raw_device {{ bond.name }}
+	{%if vlan.gtw is defined and v1.value %}gateway {{ vlan.gtw }}
+        dns-domain privatedns.com
+        dns-nameservers {{ dns1 }} {{ dns2 }}
+        {% endif %}
+
+{%endfor%}
+
+{% endif %}
+

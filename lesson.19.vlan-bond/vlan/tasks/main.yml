@@ -1,0 +1,26 @@
+---
+# tasks file for bonding
+- name: Add the OS specific varibles
+  include_vars: "{{ ansible_os_family }}.yml"
+- name: Install the required  packages in Redhat derivatives
+  yum: name='{{ item }}' state=installed
+  with_items: '{{network_pkgs}}'
+  when: ansible_os_family == 'RedHat'
+
+- name: Install the required packages in Debian derivatives
+  apt: name='{{ item }}' state=installed update_cache=yes
+  with_items: '{{network_pkgs}}'
+  environment: '{{env}}'
+  when: ansible_os_family == 'Debian'
+
+- name: Add the OS config files
+  include: "{{ ansible_os_family }}.yml"
+  become: yes
+
+#- name: Create configuration files 
+#  include: el.yml
+#  when: (ansible_os_family == "CentOS") or
+#        (ansible_os_family == "RedHat")
+#  become: yes
+
+

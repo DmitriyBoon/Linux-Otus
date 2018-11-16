@@ -1,0 +1,45 @@
+---
+
+- name: Make sure to update the  modules files
+  blockinfile:
+    dest: /etc/modules
+    marker: "# {mark}"
+    create: yes
+    block: |
+      bonding
+      8021q	
+
+- name: Make sure to add bonding files
+  blockinfile:
+    create: yes
+    dest: /etc/modprobe.d/bonding.conf
+    marker: "# {mark}"		
+    block: |
+      alias netdev-bond0 bonding
+      options bonding mode=802.3ad lacp_rate=fast miimon=100 xmit_hash_policy=layer3+4
+
+
+- name: Create interface 
+  template: src=deb_int.j2 dest="{{ deb_network_sysconfig }}"
+  when:
+  - apply
+  - ("{{ slaves| length }}" >=2)
+  notify: restart network
+  tags:
+  - deb
+  - bond
+
+- name: Apply settings NOW
+  service: name=network state=restarted
+  when:
+  - apply_now
+
+
+- name: Create interface temp
+  template: src=deb_int.j2 dest="{{ tmp_dir }}/interfaces"
+  when:
+  - not apply
+  - ("{{ slaves| length }}" >=2)
+  tags:
+  - deb
+  - bond

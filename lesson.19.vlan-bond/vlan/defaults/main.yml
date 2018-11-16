@@ -1,0 +1,50 @@
+---
+# defaults file for bonding
+
+# Set to true to apply to sysconfig files
+apply: true
+
+# Set to true to restart network service after files creation
+apply_now: false
+
+el_network_sysconfig: /etc/sysconfig/network-scripts
+deb_network_sysconfig: /etc/network/interfaces
+deb_network_sysconfig: /etc/network/interfaces
+tmp_dir: /tmp
+
+
+# Bonding options
+# More information on https://www.kernel.org/doc/Documentation/networking/bonding.txt
+
+bond_options:
+- { 'key': 'mode', 'value': '802.3ad'}
+- { 'key': 'lacp_rate', 'value': 'fast'}
+- { 'key': 'miimon', 'value': '100'}
+- { 'key': 'xmit_hash_policy', 'value': 'layer3+4'}
+
+#- { 'key': '', 'value': ''}
+
+# Normal values
+mtu: 1500
+
+# Bonding IP settings
+
+enable_ipv4: true
+manage_gateway: true
+manage_dns_servers: true
+manage_hw_addr: true
+ip_addr:
+netmask:
+gateway:
+dns1:
+dns2:
+
+# IPv6 options
+
+enable_ipv6: true
+init_ipv6: false
+ipv6_autoconf: false
+
+# Slaves options
+
+keep_slave_ipv4: false
