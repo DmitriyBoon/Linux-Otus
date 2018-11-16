@@ -1,0 +1,104 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "vvv"
+  #   ansible.playbook = "provisioning/playbook.yml"
+  #   ansible.become = "true"
+  # end
+
+
+  config.vm.provider "virtualbox" do |v|
+	  v.memory = 256
+  end
+
+  config.vm.define "server" do |server|
+    server.vm.network "private_network", ip: "192.168.255.1", virtualbox__intnet: "iptab"
+    server.vm.hostname = "server"
+    server.vm.provision "shell", inline: <<-SHELL
+    mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+    sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    systemctl restart sshd
+    yum update -y
+    yum install epel-release -y
+    yum install openvpn easy-rsa -y
+    cd /etc/openvpn
+    /usr/share/easy-rsa/3/easyrsa init-pki
+    /usr/sbin/openvpn --genkey --secret /home/vagrant/pki/ta.key
+    yes server | /usr/share/easy-rsa/3/easyrsa build-ca nopass
+    yes server | /usr/share/easy-rsa/3/easyrsa gen-req server nopass
+    yes client | /usr/share/easy-rsa/3/easyrsa gen-req client nopass
+    yes yes | /usr/share/easy-rsa/3/easyrsa sign-req server server
+    yes yes | /usr/share/easy-rsa/3/easyrsa sign-req client client
+    /usr/share/easy-rsa/3.0.3/easyrsa gen-dh
+    cp -ar pki/ca.crt pki/dh.pem pki/private/ca.key pki/private/server.key pki/private/client.key pki/issued/server.crt pki/issued/client.crt /etc/openvpn 
+    cp pki/ca.crt pki/private/client.key pki/issued/client.crt /home/vagrant/
+    cd /home/vagrant/ 
+    chmod 644 client.crt client.key ca.crt
+    # cd /etc/openvpn/
+    # mkdir keys
+    # /usr/share/easy-rsa/3.0.3/easyrsa init-pki
+    # /usr/share/easy-rsa/3.0.3/easyrsa --batch build-ca nopass
+    /usr/share/easy-rsa/3.0.3/easyrsa gen-dh
+    # /usr/share/easy-rsa/3.0.3/easyrsa  build-server-full server nopass
+    # /usr/share/easy-rsa/3.0.3/easyrsa  build-client-full client nopass
+    # openvpn --genkey --secret ta.key
+    # mv ta.key keys/
+    # cp pki/ca.crt keys/
+    # cp pki/dh.pem keys/
+    # cp pki/issued/server.crt keys/
+    # cp pki/private/server.key keys/
+    # cp /vagrant/sert.sh /home/vagrant/
+    # cd /home/vagrant
+    # cat sert.sh | tr -d '\r' > sert.sh  # убираем перевод каретки
+    # /home/vagrant/sert.sh
+    cp /vagrant/server.conf /etc/openvpn/
+    mkdir /var/log/openvpn/
+    systemctl start openvpn@server
+    echo 'net.ipv4.conf.all.forwarding=1' >> /etc/sysctl.conf
+    echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+    sysctl -p
+    iptables -t nat -A POSTROUTING -s 10.3.0.0/24 -o eth1 -j MASQUERADE
+    SHELL
+  end
+
+  config.vm.define "client" do |client|
+    client.vm.network "private_network", ip: "192.168.255.2", virtualbox__intnet: "iptab"
+    client.vm.hostname = "client"
+    client.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+  yum update -y
+  yum install epel-release -y
+  yum install openvpn -y
+  yum install sshpass -y
+  cp /vagrant/client.conf /etc/openvpn/
+  # sshpass -p "vagrant" scp -r vagrant@192.168.255.1:/home/vagrant/client.key /etc/openvpn
+  # sshpass -p "vagrant" scp -r vagrant@192.168.255.1:/home/vagrant/client.crt /etc/openvpn
+  sudo ssh-keyscan 192.168.255.1  >> /root/.ssh/known_hosts
+  sshpass -p "vagrant" rsync -av vagrant@192.168.255.1:/home/vagrant/{client.crt,client.key,ca.crt} /etc/openvpn
+  systemctl start openvpn@client
+  SHELL
+end
+
+#   config.vm.define "caserv" do |caserv|
+#     caserv.vm.network "private_network", ip: "192.168.255.3", virtualbox__intnet: "iptab"
+#     caserv.vm.hostname = "caserv"
+#     caserv.vm.provision "shell", inline: <<-SHELL
+#   mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+#   sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+#   systemctl restart sshd
+#   yum update -y 
+#   yum install ntpdate -y
+#   yum install ntp -y
+#   /etc/init.d/ntp stop
+#   ntpdate pool.ntp.org
+#   /etc/init.d/ntp start
+#   yum install openvpn -y
+# SHELL
+# end
+end
