@@ -1,0 +1,85 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "vvv"
+  #   ansible.playbook = "provisioning/playbook.yml"
+  #   ansible.become = "true"
+  # end
+
+
+  config.vm.provider "virtualbox" do |v|
+	  v.memory = 256
+  end
+
+  config.vm.define "testClient1" do |testClient1|
+    testClient1.vm.network "private_network", ip: "192.168.255.1", virtualbox__intnet: "vlan"
+    testClient1.vm.hostname = "testClient1"
+    testClient1.vm.provision "shell", inline: <<-SHELL
+    mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+    sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    systemctl restart sshd
+    
+  SHELL
+  end
+
+  config.vm.define "testClient2" do |testClient2|
+    testClient2.vm.network "private_network", ip: "192.168.255.2", virtualbox__intnet: "iptab"
+    testClient2.vm.hostname = "testClient2"
+    testClient2.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+
+  SHELL
+end
+
+  config.vm.define "testServer1" do |testServer1|
+    testServer1.vm.network "private_network", ip: "192.168.255.3", virtualbox__intnet: "vlan"
+    testServer1.vm.hostname = "testServer1"
+    testServer1.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+  
+SHELL
+  end
+
+config.vm.define "testServer1" do |testServer2|
+    testServer2.vm.network "private_network", ip: "192.168.255.4", virtualbox__intnet: "vlan"
+    testServer2.vm.hostname = "testServer2"
+    testServer2.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+ SHELL
+end
+
+config.vm.define "centralRouter" do |centralRouter|
+    centralRouter.vm.network "private_network", ip: "192.168.255.5", virtualbox__intnet: "vlan"
+    centralRouter.vm.hostname = "centralRouter"
+    centralRouter.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+ SHELL
+end
+
+config.vm.define "inetRouter" do |inetRouter|
+    inetRouter.vm.network "private_network", ip: "192.168.255.6", virtualbox__intnet: "vlan"
+    inetRouter.vm.hostname = "inetRouter"
+    inetRouter.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+  yum update -y
+  yum install epel-release -y
+  yum install ansible -y
+  cp /vagrant/ /etc/ansibles/
+  cd /etc/ansible
+  ansible-paybook vlan.yml
+  SHELL
+end
