@@ -19,9 +19,10 @@ testClient2 <-> testServer2
 ```
 
 * Запускаем Vagrant
+Переименовываем Vagarntfile.vagrant Vagrantfile
 
 ```
-bond0: flags=5187<UP,BROADCAST,RUNNING,MASTER,MULTICAST>  mtu 1500
+ubond0: flags=5187<UP,BROADCAST,RUNNING,MASTER,MULTICAST>  mtu 1500
         inet 192.168.255.1  netmask 255.255.255.252  broadcast 192.168.255.3
         inet6 fe80::a00:27ff:fe29:f8c0  prefixlen 64  scopeid 0x20<link>
         ether 08:00:27:29:f8:c0  txqueuelen 1000  (Ethernet)
@@ -69,3 +70,4 @@ eth1: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
 eth2: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
 ```
 * Запускаем ansible
+Запускаем Vagrant.ansible

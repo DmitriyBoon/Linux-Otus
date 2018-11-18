@@ -170,7 +170,7 @@ Vagrant.configure("2") do |config|
             yum update -y
               yum install epel-release -y
               yum install ansible -y
-              cp -a /vagrant/ /etc/ansible/
+              cp -R -f /vagrant/* /etc/ansible/
               cd /etc/ansible
               ansible-playbook mkvlan.yml
 			SHELL
