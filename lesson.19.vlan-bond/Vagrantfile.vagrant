@@ -1,0 +1,327 @@
+# -*- mode: ruby -*-
+# vim: set ft=ruby :
+
+MACHINES = {
+    :inetRouter => {
+          :box_name => "centos/7",
+          :net => [
+                     {adapter: 2, auto_config: false, virtualbox__intnet: "router-net"},
+                     {adapter: 3, auto_config: false, virtualbox__intnet: "router-net"},
+                  ]
+    },
+    :centralRouter => {
+          :box_name => "centos/7",
+          :net => [
+             {ip: '192.168.0.1', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+             {ip: '192.168.0.33', adapter: 3, netmask: "255.255.255.240", virtualbox__intnet: "hw-net"},
+             {ip: '192.168.0.65', adapter: 4, netmask: "255.255.255.192", virtualbox__intnet: "mgt-net"},
+             {ip: '192.168.255.5', adapter: 5, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+             {ip: '192.168.255.9', adapter: 6, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+             # bond0
+             {adapter: 7, auto_config: false, virtualbox__intnet: "router-net"},
+             {adapter: 8, auto_config: false, virtualbox__intnet: "router-net"},
+                  ]
+    },
+    :centralServer => {
+          :box_name => "centos/7",
+          :net => [
+                     {ip: '192.168.0.2', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "dir-net"},
+                  ]
+    },
+    :office1Router => {
+          :box_name => "centos/7",
+          :net => [
+                     {ip: '192.168.2.1', adapter: 2, netmask: "255.255.255.240", virtualbox__intnet: "office1-net"},
+                     {ip: '192.168.255.6', adapter: 3, netmask: "255.255.255.252", virtualbox__intnet: "router-net"},
+                  ]
+    },
+    :office1Server => {
+          :box_name => "centos/7",
+          :net => [
+                     {ip: '192.168.2.66', adapter: 2, netmask: "255.255.255.192", virtualbox__intnet: "office1-net"}
+                  ]
+    },
+  # Vlans
+    :testClient1 => {
+          :box_name => "centos/7",
+          :net => [
+            {adapter: 2, auto_config: false, virtualbox__intnet: "test-LAN"}
+                  ]
+    },
+    :testClient2 => {
+          :box_name => "centos/7",
+          :net => [
+                    {adapter: 2, auto_config: false, virtualbox__intnet: "test-LAN"}
+                  ]
+    },
+    :testServer1 => {
+          :box_name => "centos/7",
+          :net => [
+            {adapter: 2, auto_config: false, virtualbox__intnet: "test-LAN"}
+                  ]
+    },
+    :testServer2 => {
+          :box_name => "centos/7",
+          :net => [
+            {adapter: 2, auto_config: false, virtualbox__intnet: "test-LAN"}
+                  ]
+    },
+  # Vlans
+    :office2Router => {
+          :box_name => "centos/7",
+          :net => [
+                     {ip: '192.168.1.1', adapter: 2, netmask: "255.255.255.128", virtualbox__intnet: "office2-net"},
+                     {ip: '192.168.255.10', adapter: 3, netmask: "255.255.255.252", virtualbox__intnet: "router-net"}
+                  ]
+    },
+    :office2Server => {
+          :box_name => "centos/7",
+          :net => [
+                     {ip: '192.168.1.130', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "office2-net"}
+                  ]
+    },
+  }
+  
+  Vagrant.configure("2") do |config|
+  
+    MACHINES.each do |boxname, boxconfig|
+      config.vm.define boxname do |box|
+  
+          box.vm.box = boxconfig[:box_name]
+          box.vm.host_name = boxname.to_s
+  
+      config.vm.box_check_update = false
+
+      # config.vm.provision "ansible" do |ansible|
+      #   ansible.verbose = "vvv"
+      #   ansible.playbook = "vagrant/mkvlan.yml"
+      #   ansible.become = "true"
+      # end
+  
+          boxconfig[:net].each do |ipconf|
+            box.vm.network "private_network", ipconf
+          end
+          
+          if boxconfig.key?(:public)
+            box.vm.network "public_network", boxconfig[:public]
+          end
+  
+          box.vm.provision "shell", inline: <<-SHELL
+            mkdir -p ~root/.ssh
+                  cp ~vagrant/.ssh/auth* ~root/.ssh
+          SHELL
+          
+          case boxname.to_s
+  
+          when "inetRouter"
+        box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+        
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+          echo 'DEVICE=bond0' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'ONBOOT=yes\nTYPE=Bond' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BONDING_MASTER=yes' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'IPADDR=192.168.255.1' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'PREFIX=30' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BOOTPROTO=static' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BONDING_OPTS="mode=1 miimon=100 fail_over_mac=1"' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          echo 'DEVICE=eth1'  >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          echo 'MASTER=bond0'  >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          echo 'SLAVE=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1
+          echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth2
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth2
+          echo 'DEVICE=eth2' >> /etc/sysconfig/network-scripts/ifcfg-eth2
+          echo 'MASTER=bond0' >> /etc/sysconfig/network-scripts/ifcfg-eth2
+          echo 'SLAVE=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth2
+          echo 'net.ipv4.conf.all.forwarding=1' > /etc/sysctl.d/99-sysctl.conf && sysctl -p
+              iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+          systemctl restart network
+            SHELL
+          when "centralRouter"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end  
+        box.vm.provision "shell", run: "always", inline: <<-SHELL
+          echo 'DEFROUTE=no' >> /etc/sysconfig/network-scripts/ifcfg-eth0
+          echo 'DEVICE=bond0' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'TYPE=Bond' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BONDING_MASTER=yes' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'IPADDR=192.168.255.2' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'PREFIX=30' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BOOTPROTO=static' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BONDING_OPTS="mode=1 miimon=100 fail_over_mac=1"' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'GATEWAY=192.168.255.1' >> /etc/sysconfig/network-scripts/ifcfg-bond0
+          echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth6
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth6
+          echo 'DEVICE=eth6' >> /etc/sysconfig/network-scripts/ifcfg-eth6
+          echo 'MASTER=bond0' >> /etc/sysconfig/network-scripts/ifcfg-eth6
+          echo 'SLAVE=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth6
+          echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth7
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth7
+          echo 'DEVICE=eth7' >> /etc/sysconfig/network-scripts/ifcfg-eth7
+          echo 'MASTER=bond0' >> /etc/sysconfig/network-scripts/ifcfg-eth7
+          echo 'SLAVE=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth7
+              
+          echo '192.168.1.0/24 via 192.168.255.10' > /etc/sysconfig/network-scripts/route-eth5
+          echo '192.168.2.0/24 via 192.168.255.6' > /etc/sysconfig/network-scripts/route-eth4
+          echo 'net.ipv4.conf.all.forwarding=1' > /etc/sysctl.d/99-sysctl.conf && sysctl -p
+          iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o bond0 -j MASQUERADE
+          systemctl restart network
+            SHELL
+  
+          when "centralServer"
+        box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 
+              echo "GATEWAY=192.168.0.1" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+              systemctl restart network
+            SHELL
+      when "office1Router"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+          iptables -t nat -A POSTROUTING ! -d 192.168.2.0/24 -o eth2 -j MASQUERADE
+              iptables-save > /etc/iptables.rules
+              echo "/sbin/iptables-restore < /etc/iptables.rules" >> /etc/rc.d/rc.local && chmod +x /etc/rc.d/rc.local
+              echo net.ipv4.conf.all.forwarding=1 >> /etc/sysctl.d/99-sysctl.conf && sysctl -p
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+              echo "GATEWAY=192.168.255.5" >> /etc/sysconfig/network-scripts/ifcfg-eth2
+              echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'IPADDR=192.168.2.65' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'NETMASK=255.255.255.192' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'DEVICE=eth1:0' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'IPADDR=192.168.2.129' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'NETMASK=255.255.255.192' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'DEVICE=eth1:1' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth1:2
+              echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1:2
+              echo 'IPADDR=192.168.2.193' >> /etc/sysconfig/network-scripts/ifcfg-eth1:2
+              echo 'NETMASK=255.255.255.192' >> /etc/sysconfig/network-scripts/ifcfg-eth1:2
+              echo 'DEVICE=eth1:2' >> /etc/sysconfig/network-scripts/ifcfg-eth1:2
+              systemctl restart network
+            SHELL
+      when "office1Server"
+        box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+        end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+              echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+              systemctl restart network
+            SHELL
+
+      when "testClient1"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+              echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'VLAN=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'BOOTPROTO=static' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'TYPE=Ethernet' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'DEVICE=eth1.1' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'NM_CONTROLLED=no' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'IPADDR=10.10.10.254' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              echo 'PREFIX=24' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          systemctl restart network
+          cp -a /vagrant/id_rsa /home/vagrant/.ssh/
+            SHELL
+      when "testServer1"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'VLAN=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'BOOTPROTO=static' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'TYPE=Ethernet' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'DEVICE=eth1.1' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'NM_CONTROLLED=no' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'IPADDR=10.10.10.1' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+          echo 'PREFIX=24' >> /etc/sysconfig/network-scripts/ifcfg-eth1.1
+              systemctl restart network
+          cat /vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+            SHELL
+      when "testClient2"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'VLAN=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'BOOTPROTO=static' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'TYPE=Ethernet' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'DEVICE=eth1.2' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo ' NM_CONTROLLED=no' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'IPADDR=10.10.10.254' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'PREFIX=24' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+              systemctl restart network
+          cp -a /vagrant/id_rsa /home/vagrant/.ssh/
+            SHELL
+      when "testServer2"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+          echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'VLAN=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'BOOTPROTO=static' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'TYPE=Ethernet' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'DEVICE=eth1.2' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'NM_CONTROLLED=no' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'IPADDR=10.10.10.1' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+          echo 'PREFIX=24' >> /etc/sysconfig/network-scripts/ifcfg-eth1.2
+              systemctl restart network
+          cat /vagrant/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
+            SHELL
+  
+      when "office2Router"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+          iptables -t nat -A POSTROUTING ! -d 192.168.1.0/24 -o eth2 -j MASQUERADE
+              iptables-save > /etc/iptables.rules
+              echo "/sbin/iptables-restore < /etc/iptables.rules" >> /etc/rc.d/rc.local && chmod +x /etc/rc.d/rc.local
+              echo "net.ipv4.conf.all.forwarding=1" >> /etc/sysctl.d/99-sysctl.conf && sysctl -p
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+              echo "GATEWAY=192.168.255.9" >> /etc/sysconfig/network-scripts/ifcfg-eth2
+              echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'IPADDR=192.168.1.129' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'NETMASK=255.255.255.192' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'DEVICE=eth1:0' >> /etc/sysconfig/network-scripts/ifcfg-eth1:0
+              echo 'BOOTPROTO=none' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'ONBOOT=yes' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'IPADDR=192.168.1.193' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'NETMASK=255.255.255.192' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              echo 'DEVICE=eth1:1' >> /etc/sysconfig/network-scripts/ifcfg-eth1:1
+              systemctl restart network
+            SHELL
+      when "office2Server"
+            box.vm.provider :virtualbox do |vb|
+              vb.customize ["modifyvm", :id, "--memory", "256"]
+            end
+            box.vm.provision "shell", run: "always", inline: <<-SHELL
+              echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+              echo "GATEWAY=192.168.1.129" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+              systemctl restart network
+            SHELL
+          end
+        end
+    end
+  end

@@ -1,0 +1,6 @@
+---
+- hosts: bond
+  become: true
+  remote_user: root
+  roles:
+    - bond

@@ -83,3 +83,4 @@ config.vm.define "inetRouter" do |inetRouter|
   ansible-paybook vlan.yml
   SHELL
 end
+end 

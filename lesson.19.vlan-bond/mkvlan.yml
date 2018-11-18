@@ -1,0 +1,165 @@
+---
+- hosts: inetRouter
+  become: yes
+  tasks:
+   - name: Set for Eth interfaces
+     shell: |
+     echo -e 'DEVICE=bond0\nONBOOT=yes\nTYPE=Bond\nBONDING_MASTER=yes\nIPADDR=192.168.255.1\nPREFIX=30\nBOOTPROTO=static\nBONDING_OPTS="mode=1 miimon=100 fail_over_mac=1"' > /etc/sysconfig/network-scripts/ifcfg-bond0
+	    echo -e "BOOTPROTO=none\nONBOOT=yes\nDEVICE=eth1\nMASTER=bond0\nSLAVE=yes" > /etc/sysconfig/network-scripts/ifcfg-eth1
+	    echo -e "BOOTPROTO=none\nONBOOT=yes\nDEVICE=eth2\nMASTER=bond0\nSLAVE=yes" > /etc/sysconfig/network-scripts/ifcfg-eth2	
+   
+    - name: NAT
+      command: iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+      tags: iptables
+                
+    -  name : set forwarding                
+       sysctl:
+       name: net.ipv4.ip_forward
+       value: 1
+       sysctl_set: yes
+       state: present
+       reload: yes       
+        
+- hosts: centralRouter
+  become: yes
+  tasks:
+  - name: Set for Eth interfaces
+     shell: |
+        echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	      echo -e 'DEVICE=bond0\nONBOOT=yes\nTYPE=Bond\nBONDING_MASTER=yes\nIPADDR=192.168.255.2\nPREFIX=30\nBOOTPROTO=static\nBONDING_OPTS="mode=1 miimon=100 fail_over_mac=1"\nGATEWAY=192.168.255.1' > /etc/sysconfig/network-scripts/ifcfg-bond0
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nDEVICE=eth6\nMASTER=bond0\nSLAVE=yes" > /etc/sysconfig/network-scripts/ifcfg-eth6
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nDEVICE=eth7\nMASTER=bond0\nSLAVE=yes" > /etc/sysconfig/network-scripts/ifcfg-eth7
+            echo "192.168.1.0/24 via 192.168.255.10" > /etc/sysconfig/network-scripts/route-eth5
+            echo "192.168.2.0/24 via 192.168.255.6" > /etc/sysconfig/network-scripts/route-eth4
+
+   
+    - name: NAT
+      command: iptables -t nat -A POSTROUTING ! -d 192.168.0.0/16 -o eth0 -j MASQUERADE
+      tags: iptables
+                
+               
+    - name : set forwarding                
+      sysctl:
+      name: net.ipv4.ip_forward
+      value: 1
+      sysctl_set: yes
+      state: present
+      reload: yes
+    
+ 
+- hosts: office1Router
+  become: yes
+  tasks:
+
+  - name: Set for Eth interfaces
+    shell: |          
+            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+            echo "GATEWAY=192.168.255.5" >> /etc/sysconfig/network-scripts/ifcfg-eth2
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nIPADDR=192.168.2.65\nNETMASK=255.255.255.192\nDEVICE=eth1:0" > /etc/sysconfig/network-scripts/ifcfg-eth1:0
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nIPADDR=192.168.2.129\nNETMASK=255.255.255.192\nDEVICE=eth1:1" > /etc/sysconfig/network-scripts/ifcfg-eth1:1
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nIPADDR=192.168.2.193\nNETMASK=255.255.255.192\nDEVICE=eth1:2" > /etc/sysconfig/network-scripts/ifcfg-eth1:2
+                    
+  - name: NAT
+      command: iptables -t nat -A POSTROUTING ! -d 192.168.2.0/24 -o eth2 -j MASQUERADE
+      tags: iptables
+                
+               
+  -  name : set forwarding                
+     sysctl:
+     name: net.ipv4.ip_forward
+     value: 1
+     sysctl_set: yes
+     state: present
+     reload: yes
+            
+- hosts: office2 Router           
+  become: yes
+  tasks:
+
+  - name: Set for Eth interfaces
+    shell: |
+            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+            echo "GATEWAY=192.168.255.9" >> /etc/sysconfig/network-scripts/ifcfg-eth2
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nIPADDR=192.168.1.129\nNETMASK=255.255.255.192\nDEVICE=eth1:0" > /etc/sysconfig/network-scripts/ifcfg-eth1:0
+            echo -e "BOOTPROTO=none\nONBOOT=yes\nIPADDR=192.168.1.193\nNETMASK=255.255.255.192\nDEVICE=eth1:1" > /etc/sysconfig/network-scripts/ifcfg-eth1:1
+    
+    - name: NAT
+      command: iptables -t nat -A POSTROUTING ! -d 192.168.2.0/24 -o eth2 -j MASQUERADE
+      tags: iptables
+                
+               
+  -  name : set forwarding                
+     sysctl:
+     name: net.ipv4.ip_forward
+     value: 1
+     sysctl_set: yes
+     state: present
+     reload: yes      
+  
+  
+ - hosts: office1Server
+   become: yes
+   tasks:
+
+  - name: Set for Eth interfaces
+    shell: | 
+            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+            echo "GATEWAY=192.168.2.65" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+            systemctl restart network
+  
+  
+ - hosts: office2Server
+   become: yes
+   tasks:
+
+  - name: Set for Eth interfaces
+    shell: | 
+            echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+            echo "GATEWAY=192.168.1.129" >> /etc/sysconfig/network-scripts/ifcfg-eth1
+            systemctl restart network
+  
+  
+ - hosts: testServer1
+   become: yes
+   tasks:
+
+  - name: Set for Eth interfaces
+    shell: | 
+             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	         echo -e "ONBOOT=yes\nVLAN=yes\nBOOTPROTO=static\nTYPE=Ethernet\nDEVICE=eth1.1\nNM_CONTROLLED=no\nIPADDR=10.10.10.1\nPREFIX=24" >    /etc/sysconfig/network-scripts/ifcfg-eth1.1
+             systemctl restart network
+  
+  
+ - hosts: testServer2
+   become: yes
+   tasks:
+
+  - name: Set for Eth interfaces
+    shell: | 
+             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+	           echo -e "ONBOOT=yes\nVLAN=yes\nBOOTPROTO=static\nTYPE=Ethernet\nDEVICE=eth1.2\nNM_CONTROLLED=no\nIPADDR=10.10.10.1\nPREFIX=24" > /etc/sysconfig/network-scripts/ifcfg-eth1.2
+             systemctl restart network
+            
+  
+  
+ - hosts:testClient1
+   become: yes
+   tasks:
+
+  - name: Set for Eth interfaces
+    shell: | 
+             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+             echo -e "ONBOOT=yes\nVLAN=yes\nBOOTPROTO=static\nTYPE=Ethernet\nDEVICE=eth1.1\nNM_CONTROLLED=no\nIPADDR=10.10.10.254\nPREFIX=24" > /etc/sysconfig/network-scripts/ifcfg-eth1.1
+	         systemctl restart network
+             
+  
+  - hosts: testClient2
+   become: yes
+   tasks:
+
+  - name: Set for Eth interfaces
+    shell: |  
+             echo "DEFROUTE=no" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+             echo -e "ONBOOT=yes\nVLAN=yes\nBOOTPROTO=static\nTYPE=Ethernet\nDEVICE=eth1.1\nNM_CONTROLLED=no\nIPADDR=10.10.10.254\nPREFIX=24" > /etc/sysconfig/network-scripts/ifcfg-eth1.1
+	         systemctl restart network
+            

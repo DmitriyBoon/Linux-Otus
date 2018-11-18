@@ -1,0 +1,12 @@
+[testClient1]
+ansible_host=192.168.255.1 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[testServer1]
+ansible_host=192.168.255.3 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[testClient2]
+ansible_host=192.168.255.2 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[testServer2] 
+ansible_host=192.168.255.4 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[centralRouter ]
+ansible_host=192.168.255.5 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[inetRouter]
+ansible_host=192.168.255.6 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
