@@ -51,8 +51,8 @@ Vagrant.configure("2") do |config|
           nmcli connection add type vlan ifname vlan12 dev eth1 id 12 ip4 172.16.12.10/30
           nmcli connection add type vlan ifname vlan16 dev eth1 id 16 ip4 172.16.16.10/30           
           yum install quagga -y
-          cp /vagrant/quagga_conf/1ospfd.conf /etc/quagga/ospfd.conf
-          cp /vagrant/quagga_conf/1zebra.conf /etc/quagga/zebra.conf
+          cp /vagrant/quagga_conf/ospfd_1.conf /etc/quagga/ospfd.conf
+          cp /vagrant/quagga_conf/zebra_1.conf /etc/quagga/zebra.conf
           chown quagga:quagga /etc/quagga/ospfd.conf
           chown quagga:quagga /etc/quagga/ospfd.conf
           systemctl start zebra
@@ -71,8 +71,8 @@ Vagrant.configure("2") do |config|
           nmcli connection add type vlan ifname vlan12 dev eth1 id 12 ip4 172.16.12.9/30
           nmcli connection add type vlan ifname vlan20 dev eth1 id 20 ip4 172.16.20.10/30
           yum install quagga -y
-          cp /vagrant/quagga_conf/2ospfd.conf /etc/quagga/ospfd.conf
-          cp /vagrant/quagga_conf/2zebra.conf /etc/quagga/zebra.conf
+          cp /vagrant/quagga_conf/ospfd_2.conf /etc/quagga/ospfd.conf
+          cp /vagrant/quagga_conf/zebra_2.conf /etc/quagga/zebra.conf
           chown quagga:quagga /etc/quagga/ospfd.conf
           chown quagga:quagga /etc/quagga/ospfd.conf
           systemctl start zebra
@@ -91,8 +91,8 @@ Vagrant.configure("2") do |config|
           nmcli connection add type vlan ifname vlan16 dev eth1 id 16 ip4 172.16.16.9/30
           nmcli connection add type vlan ifname vlan20 dev eth1 id 20 ip4 172.16.20.9/30 
           yum install quagga -y
-          cp /vagrant/quagga_conf/3ospfd.conf /etc/quagga/ospfd.conf
-          cp /vagrant/quagga_conf/3zebra.conf /etc/quagga/zebra.conf
+          cp /vagrant/quagga_conf/ospfd_3.conf /etc/quagga/ospfd.conf
+          cp /vagrant/quagga_conf/zebra_3.conf /etc/quagga/zebra.conf
           chown quagga:quagga /etc/quagga/ospfd.conf
           chown quagga:quagga /etc/quagga/ospfd.conf
           systemctl start zebra
