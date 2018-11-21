@@ -1,0 +1,35 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 256
+      v.cpus = 1
+  end
+
+  config.vm.define "web01" do |web01|
+    web01.vm.network "private_network", ip: '192.168.11.10', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw24"
+    # web01.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh"
+    web01.vm.hostname = "web01"
+    web01.vm.provision "shell", run: "always", inline: <<-SHELL
+    yum update -y
+    yum install epel-release -y
+    yum install nginx -y
+    # cp /vagrant/host.conf /etc/nginx/conf.d
+    cp /vagrant/{nginx.conf,testcookie_whitelist.conf,proxy_headers.conf,cookies.conf} /etc/nginx
+    nginx -s reload
+    SHELL
+  end
+
+  config.vm.define "client" do |client|
+    client.vm.network "private_network", ip: '192.168.11.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw24"
+    # client.vm.network :forwarded_port, guest: 22, host: 2223, id: "ssh"
+    client.vm.hostname = "client"
+    client.vm.provision "shell", run: "always", inline: <<-SHELL
+    curl -s -L -I http://192.168.11.10
+    wget --no-cookie http://192.168.11.10
+    SHELL
+  end
+
+end
