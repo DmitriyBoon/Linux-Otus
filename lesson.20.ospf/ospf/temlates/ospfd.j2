@@ -1,0 +1,34 @@
+# ansible managed
+hostname {{ ansible_fqdn }}
+log file {{ quagga_log_dir }}/ospfd.log
+{% if quagga_use_syslog %}log syslog{% endif %}
+
+
+{% set prefix = 24 %}
+{% if ansible_default_ipv4.netmask.split(".")[3] == "128" %}
+{%    set prefix = 25 %}
+{% elif ansible_default_ipv4.netmask.split(".")[3] == "192" %}
+{%    set prefix = 26 %}
+{% elif ansible_default_ipv4.netmask.split(".")[3] == "224" %}
+{%    set prefix = 27 %}
+{% elif ansible_default_ipv4.netmask.split(".")[3] == "240" %}
+{%    set prefix = 28 %}
+{% elif ansible_default_ipv4.netmask.split(".")[3] == "248" %}
+{%    set prefix = 29 %}
+{% endif %}
+{% if 'ospfd' in quagga_access_list %}
+{%   for acl in quagga_access_list['ospfd'] %}
+{{ acl }}
+{%   endfor %}
+{% endif %}
+
+{% for inf in quagga_interfaces %}
+interface {{ inf }}
+{% endfor %}
+
+router ospf
+  ospf router-id {{ quagga_ospf_router_id }}
+  log-adjacency-changes
+  network {{ ansible_default_ipv4.network }}/{{ prefix }} area 53
+  redistribute connected
+  distribute-list ANYCAST out connected
