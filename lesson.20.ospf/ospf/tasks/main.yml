@@ -1,1 +1,32 @@
 ---
+  - name: install quagga
+    yum:
+      name: quagga
+      state: latest
+    tags:
+      - packages
+  
+  - name: Configure guagga ABR1
+    template:
+      src: /etc/ansible/roles/osfp/temlates/zebra.conf.j2
+      dest: /etc/quagga/zebra.conf
+      owner: quagga
+      grour: quagga
+      mode: 0644
+    notify: restart quagga
+    when: inventory_hostname == "ABR1"
+  
+  - name: Configure ospf 
+    temlate:
+      src: /etc/ansible/roles/ospf/template/osfpd.conf.j2
+      dst: /etc/guagga/ospfd.conf
+      owner: quagga
+      group: quagga
+      mode: 0644
+    notufy: restart quagga
+    when: inventory_hostname == "ABR1"
+  
+    - name: start quagga
+      service: name=quagga enabled=yes state=started
+
+
