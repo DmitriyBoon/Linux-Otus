@@ -1,0 +1,21 @@
+---
+- include: setup-redhat.yml
+  when: ansible_os_family == "RedHat"
+
+- name: create quagga daemon configuration
+  template: >-
+    src=quagga.j2
+    dest=/etc/quagga/{{ item.key }}.conf
+    owner={{ quagga_uid }}
+    group={{ quagga_gid }}
+    mode=0640
+    backup=yes
+  with_dict: "{{ quagga_conf }}"
+  notify: restart quagga
+
+- name: enable and start zebra
+  service: name=zebra enabled=yes state=started
+
+- name: enable and start quagga services
+  service: name={{ item.key }} enabled=yes state=started
+  with_dict: "{{ quagga_conf }}"

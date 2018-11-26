@@ -1,0 +1,12 @@
+---
+- name: install quagga
+  yum: name=quagga state=installed
+
+- name: create quagga sysconfig
+  template: >-
+    src=quagga.sysconfig.j2
+    dest=/etc/sysconfig/quagga
+    owner=root
+    group=root
+    mode=0644
+    backup=yes

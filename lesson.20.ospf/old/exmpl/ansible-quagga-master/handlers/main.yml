@@ -1,0 +1,4 @@
+---
+- name: restart quagga
+  service: name={{ item.key }} state=restarted
+  with_dict: quagga_conf

@@ -1,0 +1,4 @@
+[ospf]
+10.0.10.1 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+10.0.20.1 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+10.0.30.1 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant

@@ -1,0 +1,6 @@
+# Ansible configuration for {{ item.key }}
+{% if item.value is string %}
+{{ item.value }}
+{% else %}
+{{ "\n".join(item.value) }}
+{% endif %}

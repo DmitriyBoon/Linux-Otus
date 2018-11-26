@@ -1,0 +1,18 @@
+# ansible managed
+hostname {{ ansible_fqdn }}
+log file {{ quagga_log_dir }}/ospf6d.log
+{% if quagga_use_syslog %}log syslog{% endif %}
+
+{% for inf in quagga_interfaces %}
+interface {{ inf }}
+{% endfor %}
+
+router ospf6
+  router-id {{ quagga_ospf_router_id }}
+  area 0.0.0.0 range {{ ansible_default_ipv6.address}}/{{ ansible_default_ipv6.prefix }}
+  redistribute connected route-map ANYCAST
+
+ipv6 prefix-list anycast_dns seq 5 permit {{ ansible_default_ipv6.address }}/128
+
+route-map ANYCAST permit 10
+  match ipv6 address prefix-list anycast_dns

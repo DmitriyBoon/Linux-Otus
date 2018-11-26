@@ -7,26 +7,38 @@
       - packages
   
   - name: Configure guagga ABR1
-    template:
-      src: /etc/ansible/roles/osfp/temlates/zebra.conf.j2
-      dest: /etc/quagga/zebra.conf
-      owner: quagga
-      grour: quagga
-      mode: 0644
+    copy:
+      src: "{{ item }}"
+      dest: "/etc/quagga/{{ item }}"
+      whith_item:
+         - zebra_1.conf
+         - osfpd_1.conf
+      when: 
+      nostname:
+         - ABR1
     notify: restart quagga
-    when: inventory_hostname == "ABR1"
   
-  - name: Configure ospf 
-    temlate:
-      src: /etc/ansible/roles/ospf/template/osfpd.conf.j2
-      dst: /etc/guagga/ospfd.conf
-      owner: quagga
-      group: quagga
-      mode: 0644
-    notufy: restart quagga
-    when: inventory_hostname == "ABR1"
+  - name: Configure guagga ABR2
+    copy:
+      src: "{{ item }}"
+      dest: "/etc/quagga/{{ item }}"
+      whith_item:
+         - zebra_2.conf
+         - osfpd_2.conf
+      when: 
+      nostname:
+         - ABR2
+    notify: restart quagga
   
-    - name: start quagga
-      service: name=quagga enabled=yes state=started
-
+  - name: Configure guagga ABR3
+    copy:
+      src: "{{ item }}"
+      dest: "/etc/quagga/{{ item }}"
+      whith_item:
+         - zebra_3.conf
+         - osfpd_3.conf
+      when: 
+      nostname:
+         - ABR3
+    notify: restart quagga
 

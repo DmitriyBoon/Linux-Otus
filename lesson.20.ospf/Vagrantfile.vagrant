@@ -44,46 +44,65 @@ Vagrant.configure("2") do |config|
         case boxname.to_s
         when "ABR1"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
-          mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
-          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
           echo net.ipv4.conf.all.forwarding=1  >> /etc/sysctl.conf
           echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
           echo net.ipv4.conf.all.rp_filter=2 >> /etc/sysctl.conf
           sysctl -p
           nmcli connection add type vlan ifname vlan12 dev eth1 id 12 ip4 172.16.12.10/30
           nmcli connection add type vlan ifname vlan16 dev eth1 id 16 ip4 172.16.16.10/30           
+          yum install quagga -y
+          cp /vagrant/ospfd_1.conf /etc/quagga/ospfd.conf
+          cp /vagrant/zebra_1.conf /etc/quagga/zebra.conf
+          chown quagga:quagga /etc/quagga/ospfd.conf
+          chown quagga:quagga /etc/quagga/ospfd.conf
+          systemctl start zebra
+          systemctl enable zebra
+          systemctl start ospfd
+          systemctl enable ospfd
+          # Включить rp_filter для всех интерфейсов
+          # for i in /proc/sys/net/ipv4/conf/*/rp_filter ; do 
+          # echo 0 > $i 
+          # done
           SHELL
 
         
         when "ABR2"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
-          mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
-          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
           echo net.ipv4.conf.all.forwarding=1  >> /etc/sysctl.conf
           echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
           echo net.ipv4.conf.all.rp_filter=2 >> /etc/sysctl.conf
           sysctl -p
           nmcli connection add type vlan ifname vlan12 dev eth1 id 12 ip4 172.16.12.9/30
           nmcli connection add type vlan ifname vlan20 dev eth1 id 20 ip4 172.16.20.10/30
+          yum install quagga -y
+          cp /vagrant/ospfd_2.conf /etc/quagga/ospfd.conf
+          cp /vagrant/zebra_2.conf /etc/quagga/zebra.conf
+          chown quagga:quagga /etc/quagga/ospfd.conf
+          chown quagga:quagga /etc/quagga/ospfd.conf
+          systemctl start zebra
+          systemctl enable zebra
+          systemctl start ospfd
+          systemctl enable ospfd
           SHELL
     
 
         when "ABR3"
           box.vm.provision "shell", run: "always", inline: <<-SHELL
-          mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
-          sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
           echo net.ipv4.conf.all.forwarding=1  >> /etc/sysctl.conf
           echo net.ipv4.ip_forward=1 >> /etc/sysctl.conf
           echo net.ipv4.conf.all.rp_filter=2 >> /etc/sysctl.conf
           sysctl -p
           nmcli connection add type vlan ifname vlan16 dev eth1 id 16 ip4 172.16.16.9/30
           nmcli connection add type vlan ifname vlan20 dev eth1 id 20 ip4 172.16.20.9/30 
-          ssh-keyscan -f scan >> /root/.ssh/known_hosts
-          yum update -y && yum install epel-release -y && yum install ansible -y
-          mkdir /etc/ansible/roles/ospf/
-          cp /vagrant/{ospf.yml,scan,hosts} /etc/ansible/
-          cp -a /vagrant/ospf/* /etc/ansible/roles/ospf/
-          ansible-playbook ospf.yml
+          yum install quagga -y
+          cp /vagrant/ospfd_3.conf /etc/quagga/ospfd.conf
+          cp /vagrant/zebra_3.conf /etc/quagga/zebra.conf
+          chown quagga:quagga /etc/quagga/ospfd.conf
+          chown quagga:quagga /etc/quagga/ospfd.conf
+          systemctl start zebra
+          systemctl enable zebra
+          systemctl start ospfd
+          systemctl enable ospfd
           SHELL
         end 
 
