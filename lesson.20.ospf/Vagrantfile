@@ -83,6 +83,7 @@ Vagrant.configure("2") do |config|
           mkdir /etc/ansible/roles/ospf/
           cp /vagrant/{ospf.yml,scan,hosts} /etc/ansible/
           cp -a /vagrant/ospf/* /etc/ansible/roles/ospf/
+          cd /etc/ansible
           ansible-playbook ospf.yml
           SHELL
         end 

@@ -5,40 +5,33 @@
       state: latest
     tags:
       - packages
-  
+
   - name: Configure guagga ABR1
     copy:
       src: "{{ item }}"
       dest: "/etc/quagga/{{ item }}"
-      whith_item:
-         - zebra_1.conf
-         - osfpd_1.conf
-      when: 
-      nostname:
-         - ABR1
+    loop:
+      - zebra_1.conf
+      - ospfd_1.conf
+    when: ansible_hostname == 'ABR1'
     notify: restart quagga
-  
+
   - name: Configure guagga ABR2
     copy:
       src: "{{ item }}"
       dest: "/etc/quagga/{{ item }}"
-      whith_item:
-         - zebra_2.conf
-         - osfpd_2.conf
-      when: 
-      nostname:
-         - ABR2
+    loop:
+      - zebra_2.conf
+      - ospfd_2.conf
+    when: ansible_hostname == 'ABR2'
     notify: restart quagga
-  
+
   - name: Configure guagga ABR3
     copy:
       src: "{{ item }}"
       dest: "/etc/quagga/{{ item }}"
-      whith_item:
-         - zebra_3.conf
-         - osfpd_3.conf
-      when: 
-      nostname:
-         - ABR3
+    loop:
+      - zebra_3.conf
+      - ospfd_3.conf
+    when: ansible_hostname == 'ABR3'
     notify: restart quagga
-
