@@ -6,34 +6,41 @@
     tags:
       - packages
 
-  - name: Configure guagga ABR1
+  - name: Configure zebra ABR1
     copy:
       src: "zebra_1.conf"
       dest: "/etc/quagga/zebra.conf"
-  
-  - name: Configure guagga ABR1
+    when: ansible_hostname == 'ABR1'
+
+  - name: Configure ospf ABR1
     copy:
       src: "ospfd_1.conf"
       dest: "/etc/quagga/ospfd.conf"
     when: ansible_hostname == 'ABR1'
     notify: restart quagga
 
-  - name: Configure guagga ABR2
+  - name: Configure zebra ABR2
     copy:
-      src: "{{ item }}"
-      dest: "/etc/quagga/{{ item }}"
-    loop:
-      - zebra_2.conf
-      - ospfd_2.conf
+      src: "zebra_2.conf"
+      dest: "/etc/quagga/zebra.conf"
+    when: ansible_hostname == 'ABR2'
+
+  - name: Configure ospf ABR2
+    copy:
+      src: "ospfd_2.conf"
+      dest: "/etc/quagga/ospfd.conf"
     when: ansible_hostname == 'ABR2'
     notify: restart quagga
-
-  - name: Configure guagga ABR3
+  
+  - name: Configure zebra ABR3
     copy:
-      src: "{{ item }}"
-      dest: "/etc/quagga/{{ item }}"
-    loop:
-      - zebra_3.conf
-      - ospfd_3.conf
+      src: "zebra_3.conf"
+      dest: "/etc/quagga/zebra.conf"
+    when: ansible_hostname == 'ABR3'
+
+  - name: Configure osfd ABR3
+    copy:
+      src: "ospfd_3.conf"
+      dest: "/etc/quagga/ospfd.conf"
     when: ansible_hostname == 'ABR3'
     notify: restart quagga
