@@ -8,11 +8,13 @@
 
   - name: Configure guagga ABR1
     copy:
-      src: "{{ item }}"
-      dest: "/etc/quagga/{{ item }}"
-    loop:
-      - zebra_1.conf
-      - ospfd_1.conf
+      src: "zebra_1.conf"
+      dest: "/etc/quagga/zebra.conf"
+  
+  - name: Configure guagga ABR1
+    copy:
+      src: "ospfd_1.conf"
+      dest: "/etc/quagga/ospfd.conf"
     when: ansible_hostname == 'ABR1'
     notify: restart quagga
 
