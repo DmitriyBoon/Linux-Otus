@@ -1,0 +1,67 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 256
+      v.cpus = 1
+  end
+
+  config.vm.define "web01" do |web01|
+    web01.vm.network "private_network", ip: '192.168.11.10', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw24"
+    # web01.vm.network :forwarded_port, guest: 22, host: 2222, id: "ssh"
+    web01.vm.hostname = "web01"
+    web01.vm.provision "shell", run: "always", inline: <<-SHELL
+    yum update -y
+    yum install epel-release -y
+    yum install nginx -y
+    yum install wget git -y
+    yum groupinstall 'Development Tools' -y
+    yum install gcc gcc-c++ kernel-devel -y
+    yum install pcre-devel -y
+    yum install zlib-devel -y
+    yum install openssl-devel -y
+    yum install libxslt-devel -y
+    yum install gd-devel -y
+    yum install geoip-devel -y
+    # yum groupinstall "C Development Tools and Libraries"
+    # yum install mesa-libGL-devel
+    # yum install gperftools gperftools-devel -y
+    mkdir /usr/local/share/nginx
+    cd /usr/local/share/nginx
+    # wget https://www.openssl.org/source/openssl-1.0.2-latest.tar.gz
+    # tar -zxf openssl-1.0.2-latest.tar.gz
+    # cd openssl-1.0.2q/
+    # make
+    # make test
+    # make install
+    # cd /usr/local/share/nginx
+    git clone https://github.com/kyprizel/testcookie-nginx-module.git
+    # wget 'http://nginx.org/download/nginx-1.9.11.tar.gz'
+    # tar -xzvf nginx-1.9.11.tar.gz
+    # cd nginx-1.9.11/
+    wget 'http://nginx.org/download/nginx-1.15.7.tar.gz'
+    tar -xzvf nginx-1.15.7.tar.gz
+    cd nginx-1.15.7/
+    ./configure --prefix=/etc/nginx --sbin-path=/usr/sbin/nginx --modules-path=/usr/lib64/nginx/modules --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --pid-path=/var/run/nginx.pid --lock-path=/var/run/nginx.lock --http-client-body-temp-path=/var/cache/nginx/client_temp --http-proxy-temp-path=/var/cache/nginx/proxy_temp --http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp --http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp --http-scgi-temp-path=/var/cache/nginx/scgi_temp --user=nginx --group=nginx --with-compat --with-file-aio --with-threads --with-http_addition_module --with-http_auth_request_module --with-http_dav_module --with-http_flv_module --with-http_gunzip_module --with-http_gzip_static_module --with-http_mp4_module --with-http_random_index_module --with-http_realip_module --with-http_secure_link_module --with-http_slice_module --with-http_ssl_module --with-http_stub_status_module --with-http_sub_module --with-http_v2_module --with-mail --with-mail_ssl_module --with-stream --with-stream_realip_module --with-stream_ssl_module --with-stream_ssl_preread_module --with-cc-opt='-O2 -g -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fstack-protector-strong --param=ssp-buffer-size=4 -grecord-gcc-switches -m64 -mtune=generic -fPIC' --with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie' --add-module=../testcookie-nginx-module --with-http_geoip_module=dynamic
+    mkdir /var/cache/nginx/
+    cp /vagrant/{nginx.conf,testcookie_whitelist.conf,proxy_headers.conf,testcookie.conf} /etc/nginx
+    make
+    make install
+    service nginx restart
+    SHELL
+  end
+
+  config.vm.define "client" do |client|
+    client.vm.network "private_network", ip: '192.168.11.101', adapter: 2, netmask: "255.255.255.0", virtualbox__intnet: "sw24"
+    # client.vm.network :forwarded_port, guest: 22, host: 2223, id: "ssh"
+    client.vm.hostname = "client"
+    client.vm.provision "shell", run: "always", inline: <<-SHELL
+    yum install curl wget -y
+    curl -s -L -I http://192.168.11.10
+    wget --no-cookie http://192.168.11.10
+    SHELL
+  end
+
+end
