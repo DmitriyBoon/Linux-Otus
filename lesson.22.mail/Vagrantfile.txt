@@ -1,0 +1,39 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "vvv"
+  #   ansible.playbook = "mail.yml"
+  #   ansible.become = "true"
+  # end
+
+
+  config.vm.provider "virtualbox" do |v|
+	  v.memory = 256
+  end
+
+  config.vm.define "mail.serv" do |mail.int|
+    mail.int.vm.network "private_network", ip: "192.168.255.1", virtualbox__intnet: "iptab"
+    mail.int.vm.hostname = "mail.int"
+    mail.int.vm.provision "shell", inline: <<-SHELL
+    mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+    sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  
+  SHELL
+  end
+
+  config.vm.define "mail.client" do |mail.client|
+    mail.client.vm.network "private_network", ip: "192.168.255.2", virtualbox__intnet: "iptab"
+    mail.client.vm.hostname = "mail.client"
+    mail.client.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+  
+  SHELL
+end
+
+end

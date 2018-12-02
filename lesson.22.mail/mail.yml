@@ -1,0 +1,15 @@
+---
+- name: deploy Postfix and Dovecot
+  hosts: localhost
+  become: true
+
+  vars:
+  - postfix_dovecot_mysql_password: password
+  - dovecot_ssl_cert: "{{ ssl_certs_cert_path }}"
+  - dovecot_ssl_key: "{{ ssl_certs_privkey_path }}"
+  - postfix_ssl_cert: "{{ ssl_certs_cert_path }}"
+  - postfix_ssl_key: "{{ ssl_certs_privkey_path }}"
+  - postfix_default_domain: 'test.local'
+
+  roles:
+  - mail

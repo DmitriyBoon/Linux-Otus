@@ -1,0 +1,20 @@
+---
+- name: postmap generic
+  tags: postfix
+  become: true
+  command: |
+    postmap hash:/etc/postfix/generic
+
+- name: postmap sasl_passwd
+  tags: postfix
+  become: true
+  command: |
+    postmap hash:/etc/postfix/sasl_passwd
+
+- name: restart postfix
+  tags: postfix
+  become: true
+  service:
+    name: postfix
+    state: restarted
+

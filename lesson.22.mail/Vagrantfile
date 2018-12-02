@@ -1,0 +1,43 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+
+  # config.vm.provision "ansible" do |ansible|
+  #   ansible.verbose = "vvv"
+  #   ansible.playbook = "mail.yml"
+  #   ansible.become = "true"
+  # end
+
+
+  config.vm.provider "virtualbox" do |v|
+	  v.memory = 256
+  end
+
+  config.vm.define "mailserv" do |mailserv|
+    mailserv.vm.network "private_network", ip: "192.168.255.1", virtualbox__intnet: "iptab"
+    mailserv.vm.hostname = "mailserv"
+    mailserv.vm.provision "shell", inline: <<-SHELL
+    mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+    sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+    yum update -y && yum install epel-release -y && yum install ansible -y
+    mkdir /etc/ansible/roles/
+    cp -a /vagrant/* /etc/ansible/
+    cd /etc/ansible/
+    ansible-playbook mail.yml
+  SHELL
+  end
+
+  config.vm.define "mailclient" do |mailclient|
+    mailclient.vm.network "private_network", ip: "192.168.255.2", virtualbox__intnet: "iptab"
+    mailclient.vm.hostname = "mailclient"
+    mailclient.vm.provision "shell", inline: <<-SHELL
+  mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
+  sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+  systemctl restart sshd
+  
+  SHELL
+end
+
+end

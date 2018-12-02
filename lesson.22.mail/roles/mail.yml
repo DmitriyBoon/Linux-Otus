@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  become: true
+  remote_user: root
+  roles:
+    - postfix
+
