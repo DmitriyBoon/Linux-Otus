@@ -85,14 +85,14 @@
     mode: 0440
   notify: restart dovecot
 
-# - name: configure Dovecot (10-ssl.conf)
-#   template:
-#     src: etc/dovecot/conf.d/10-ssl.conf.j2
-#     dest: /etc/dovecot/conf.d/10-ssl.conf
-#     owner: vmail
-#     group: dovecot
-#     mode: 0440
-#   notify: restart dovecot
+- name: configure Dovecot (10-ssl.conf)
+  template:
+    src: etc/dovecot/conf.d/10-ssl.conf.j2
+    dest: /etc/dovecot/conf.d/10-ssl.conf
+    owner: vmail
+    group: dovecot
+    mode: 0440
+  notify: restart dovecot
 
 - name: configure Dovecot (auth-sql.conf.ext)
   template:

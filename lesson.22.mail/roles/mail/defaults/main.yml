@@ -2,8 +2,8 @@
 dovecot_protocols:
 - 'lmtp'
 - 'imap'
-ssl_certs_cert_path: '/etc/postfix/certs/'
-ssl_certs_privkey_path: '/etc/postfix/certs/'
+ssl_certs_cert_path: '/etc/postfix/certs/cert.pem'
+ssl_certs_privkey_path: '/etc/postfix/certs/key.pem'
 dovecot_mail_privileged_group: 'mail'
 dovecot_disable_plaintext_auth: 'yes'
 dovecot_auth_mechanisms:
@@ -11,7 +11,9 @@ dovecot_auth_mechanisms:
 - 'login'
 dovecot_force_imaps: True
 dovecot_force_pop3s: True
-dovecot_ssl: 'required'
+dovecot_ssl: 'yes'
+dovecot_ssl_cert: '/etc/postfix/certs/cert.pem'
+dovecot_ssl_key: '/etc/postfix/certs/key.pem'
 dovecot_listen:
 - '*'
 - '::'

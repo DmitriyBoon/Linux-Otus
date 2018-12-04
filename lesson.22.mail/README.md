@@ -1,86 +1,84 @@
-# ansible-role-postfix
+# Почта: SMTP, IMAP, POP3
 
+Запускаем Vagrant 
+Ждем пока отработает, сервер разворачивается из ansible роли
+Руками добавляем базу в mysql 
 
-RHEL/CentOS - A free and open-source mail transfer agent
+* mysql
 
-## Requirements
+```
+create database servermail;
 
-None
+CREATE TABLE `virtual_domains` (
+    `id`  INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-## Role Variables
+CREATE TABLE `virtual_users` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `domain_id` INT NOT NULL,
+    `password` VARCHAR(106) NOT NULL,
+    `email` VARCHAR(120) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `email` (`email`),
+    FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-Available variables are listed below, along with default values:
+CREATE TABLE `virtual_aliases` (
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `domain_id` INT NOT NULL,
+    `source` varchar(100) NOT NULL,
+    `destination` varchar(100) NOT NULL,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
 
-    postfix_generic_maps: {}
-    postfix_packages: []
-    postfix_parameters:
-      alias_database: 'hash:/etc/aliases'
-      alias_maps: 'hash:/etc/aliases'
-      command_directory: /usr/sbin
-      daemon_directory: /usr/libexec/postfix
-      data_directory: /var/lib/postfix
-      debug_peer_level: 2
-      debugger_command: 'PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin ddd $daemon_directory/$process_name $process_id & sleep 5'
-      html_directory: false
-      inet_interfaces: localhost
-      inet_protocols: all
-      mail_owner: postfix
-      mailq_path: /usr/bin/mailq.postfix
-      manpage_directory: /usr/share/man
-      mydestination:
-        - $myhostname
-        - localhost.$mydomain
-        - localhost
-      newaliases_path: /usr/bin/newaliases.postfix
-      readme_directory: "/usr/share/doc/postfix-{{ postfix_version }}/README_FILES"
-      sample_directory: "/usr/share/doc/postfix-{{ postfix_version }}/samples"
-      sendmail_path: /usr/sbin/sendmail.postfix
-      setgid_group: postdrop
-      queue_directory: /var/spool/postfix
-      unknown_local_recipient_reject_code: 550
+* Отправка письма
 
-## Dependencies
+``` 
+[root@mailclient ~]# telnet 192.168.255.1 25
+Trying 192.168.255.1...
+Connected to 192.168.255.1.
+Escape character is '^]'.
+220 mailserv ESMTP Postfix
+helo mail
+250 mailserv
+MAIL FROM: root@localhost
+250 2.1.0 Ok
+RCPT TO: mailserv@localhost
+250 2.1.5 Ok
+DATA
+354 End data with <CR><LF>.<CR><LF>
+otus bla bla bka^?^[[3~
+.
+250 2.0.0 Ok: queued as 6A7B7C08E9
+quit
+221 2.0.0 Bye
+Connection closed by foreign host.
+```
 
-None
+* письмо
+```
+cat mailserv
+From root@localhost  Mon Dec  3 13:44:11 2018
+Return-Path: <root@localhost>
+X-Original-To: mailserv@localhost
+Delivered-To: mailserv@localhost
+Received: from mail (unknown [192.168.255.2])
+        by mailserv (Postfix) with SMTP id 0467BC08E9
+        for <mailserv@localhost>; Mon,  3 Dec 2018 13:43:01 +0000 (UTC)
 
-## Example Playbook
+bla bla bla
 
-    - hosts: servers
-      roles:
-        - role: linuxhq.postfix
-          postfix_generic_maps:
-            root: email@address.com
-          postfix_packages:
-            - cyrus-sasl
-            - cyrus-sasl-lib
-            - cyrus-sasl-plain
-          postfix_parameters:
-            alias_database: 'hash:/etc/aliases'
-            alias_maps: 'hash:/etc/aliases'
-            command_directory: /usr/sbin
-            daemon_directory: /usr/libexec/postfix
-            data_directory: /var/lib/postfix
-            inet_interfaces: localhost
-            inet_protocols: all
-            mail_owner: postfix
-            mailq_path: /usr/bin/mailq.postfix
-            manpage_directory: /usr/share/man
-            myhostname: "{{ inventory_hostname }}"
-            mydomain: "{{ inventory_hostname }}"
-            mynetworks:
-              - 192.168.0.0/24
-            newaliases_path: /usr/bin/newaliases.postfix
-            relayhost: '[email.server.com]:587'
-            sendmail_path: /usr/sbin/sendmail.postfix
-            setgid_group: postdrop
-            smtp_generic_maps: hash:/etc/postfix/generic
-            smtp_sasl_auth_enable: true
-            smtp_sasl_password_maps: hash:/etc/postfix/sasl_passwd
-            smtp_sasl_security_options: noanonymous
-            smtp_tls_CAfile: /etc/ssl/certs/ca-bundle.crt
-            smtp_tls_security_level: encrypt
-            smtp_use_tls: true
-            queue_directory: /var/spool/postfix
-            unknown_local_recipient_reject_code: 550
-        postfix_sasl_password: v9bzc8emfbdqu
-        postfix_sasl_username: email@address.com
+From root@localhost  Mon Dec  3 13:45:37 2018
+Return-Path: <root@localhost>
+X-Original-To: mailserv@localhost
+Delivered-To: mailserv@localhost
+Received: from mail (unknown [192.168.255.2])
+        by mailserv (Postfix) with SMTP id 6A7B7C08E9
+        for <mailserv@localhost>; Mon,  3 Dec 2018 13:44:59 +0000 (UTC)
+
+otus bla bla bk
+```
