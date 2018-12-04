@@ -1,0 +1,35 @@
+---
+- hosts: postgres
+  vars_files:
+    - includes/vars.yml
+  gather_facts: false
+  sudo: true
+  tasks:
+
+    - name: Check if Postgres is installed
+      stat: path=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+      register: is_installed
+
+    - name: Check if already a slave
+      stat: path={{ data_directory }}/recovery.conf
+      register: recovery
+
+    - name: Install Packages
+      include: includes/packages.yml
+      when: is_installed.stat.exists == False
+
+    - name: Stop Slave Postgres service
+      service: name=postgresql state=stopped
+      when: 
+        - "'pslaves' in group_names"
+        - recovery.stat.exists == False
+
+    - name: Master Setup
+      include: includes/master.yml
+      when: "'pmasters' in group_names"
+
+    - name: Setup Slaves when they are new slaves
+      include: includes/slave.yml
+      when:
+       - "'pslaves' in group_names"
+       - recovery.stat.exists == False

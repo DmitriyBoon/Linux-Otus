@@ -1,0 +1,44 @@
+---
+    - name: Add master IP to pg_hba.conf
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf line="host    replication     {{ rep_user }}     {{item}}/32  md5"
+      with_items:
+        - "{{ groups['pmasters'] }}"
+
+    - name: Base Backup
+      become_user: postgres
+      shell: PGPASSWORD="{{rep_password}}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
+      with_items:
+        - "{{ groups['pmasters'] }}"
+
+
+    - name: Add postgres config directives
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf line={{ item }}
+      with_items:
+        - "{{ postgres_vars }}"
+
+    - name: Add interface IP to listen on 
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf line="listen_addresses = '{{ inventory_hostname }}'"
+
+    - name: Add master IP to pg_hba.conf
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf line="host  all  {{ db_user }}     {{item}}/32  trust"
+      with_items:
+        - "{{ groups['pmasters'] }}"
+
+    - name: create Recovery file
+      become_user: postgres
+      lineinfile: dest={{ data_directory }}/recovery.conf create=True state=present line="{{ item }}" 
+      with_items:
+        - "{{ slave_recovery }}"
+
+    - name: Add masters IP to recovery.conf
+      become_user: postgres
+      lineinfile: dest={{ data_directory }}/recovery.conf line="primary_conninfo = 'host={{item}} port=5432 user={{ rep_user }} password={{ rep_password }}'"
+      with_items:
+        - "{{ groups['pmasters'] }}"
+
+    - name: Start Slave Postgres Service
+      service: name=postgresql state=started

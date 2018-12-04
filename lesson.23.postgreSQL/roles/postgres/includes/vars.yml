@@ -1,0 +1,28 @@
+---
+postgresql_version: 9.5
+postgres_vars:
+ - max_connections = 100
+ - shared_buffers = 1GB
+ - effective_cache_size = 1GB
+ - archive_mode = on
+ - archive_command = 'cd .'
+ - max_wal_senders = 20
+ - hot_standby = on
+ - wal_keep_segments = 20
+ - max_wal_size = 1GB
+ - wal_level = 'hot_standby'
+
+slave_recovery:
+ - trigger_file = '/tmp/postgresql.trigger.5432'
+ - standby_mode = 'on'
+
+db_user: postgres
+db_name: test
+db_pass: 11
+rep_user: rep
+rep_password: reppassword
+data_directory: /home/data
+system_packages:
+  - postgresql-9.5
+  - postgresql-9.5-prefix
+  - python-psycopg2

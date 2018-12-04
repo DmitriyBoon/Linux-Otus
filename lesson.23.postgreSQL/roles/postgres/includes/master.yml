@@ -1,0 +1,47 @@
+---
+    - name: Stop Postgresql
+      service: name=postgresql state=stopped
+
+    - name: run initdb on directory
+      become_user: postgres
+      command: /usr/lib/postgresql/{{ postgresql_version }}/bin/initdb -D {{ data_directory }}
+
+    - name: Add master to pg_hba
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf line="host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
+
+    - name: Add slaves IP to pg_hba.conf
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf line="host    replication     {{ rep_user }}     {{item}}/32  md5"
+      with_items:
+        - "{{ groups['pslaves'] }}"
+
+    - name: Add interface IP to listen on
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf line="listen_addresses = '{{ inventory_hostname }}'"
+      
+    - name: Start Postgresql service
+      service: name=postgresql state=started
+
+    - name: Create {{db_name}} database
+      become_user: postgres
+      postgresql_db: name={{ db_name }} login_user={{ db_user }} login_password={{ db_pass }}
+
+    - name: Drop Replication user if exists
+      become_user: postgres
+      shell: psql -c "drop user if exists {{ rep_user }};"
+
+    - name: Create a Rep User
+      become_user: postgres
+      shell: psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"
+
+    - name: Add postgres config directives
+      become_user: postgres
+      lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf line={{ item }}
+      with_items:
+        - "{{ postgres_vars }}"
+
+    - name: Restart Postgresql service
+      service: name=postgresql state=restarted
+
+

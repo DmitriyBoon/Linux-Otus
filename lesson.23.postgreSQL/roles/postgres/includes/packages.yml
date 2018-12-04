@@ -1,0 +1,16 @@
+---
+    - name: connect to slaves and master and add postgres repo
+      command: sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+
+    - name: get GPG key
+      apt_key: url=https://www.postgresql.org/media/keys/ACCC4CF8.asc state=present
+
+    - name: install postgres packages
+      become_method: sudo
+      action: apt pkg={{item}} update_cache=yes
+      with_items:
+        - "{{ system_packages }}"
+      sudo: yes
+
+    - name: change data directory
+      include: includes/data_dir.yml
