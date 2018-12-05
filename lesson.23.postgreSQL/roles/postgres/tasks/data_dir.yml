@@ -6,5 +6,5 @@
       lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf line="data_directory = '{{ data_directory }}'"
 
     - name: Restart Postgresql service
-      service: name=postgresql state=restarted
+      systemd: name=postgresql-9.5 state=restarted
 

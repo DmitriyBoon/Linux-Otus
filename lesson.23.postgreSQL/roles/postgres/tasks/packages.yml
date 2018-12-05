@@ -6,5 +6,5 @@
         - "{{ system_packages }}"
       sudo: yes
 
-    - name: change data directory
-      include: data_dir.yml
+    # - name: change data directory
+    #   include: data_dir.yml

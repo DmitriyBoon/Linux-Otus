@@ -41,4 +41,4 @@
         - "{{ groups['pmasters'] }}"
 
     - name: Start Slave Postgres Service
-      service: name=postgresql state=started
+      systemd: name=postgresql-9.5 state=started

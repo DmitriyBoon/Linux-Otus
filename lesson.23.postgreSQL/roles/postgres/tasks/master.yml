@@ -1,14 +1,14 @@
 ---
     - name: Stop Postgresql
-      service: name=postgresql state=stopped
+      systemd: name=postgresql-9.5 state=stopped
 
     - name: run initdb on directory
       become_user: postgres
-      command: /usr/lib/pgsql/{{ postgresql_version }}/bin/initdb -D {{ data_directory }}
+      command: /usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}
 
     - name: Add master to pg_hba
       become_user: postgres
-      lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf line="host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
+      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/initdb/g_hba.conf line="host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
 
     - name: Add slaves IP to pg_hba.conf
       become_user: postgres
@@ -21,7 +21,7 @@
       lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf line="listen_addresses = '{{ inventory_hostname }}'"
       
     - name: Start Postgresql service
-      service: name=postgresql state=started
+      systemd: name=postgresql-9.5 state=started
 
     - name: Create {{db_name}} database
       become_user: postgres
@@ -42,6 +42,6 @@
         - "{{ postgres_vars }}"
 
     - name: Restart Postgresql service
-      service: name=postgresql state=restarted
+      systemd: name=postgresql-9.5 state=restarted
 
 

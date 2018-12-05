@@ -12,7 +12,7 @@
       when: is_installed.stat.exists == False
 
     - name: Stop Slave Postgres service
-      service: name=postgresql state=stopped
+      systemd: name=postgresql-9.5 state=stopped
       when: 
         - "'pslaves' in group_names"
         - recovery.stat.exists == False
