@@ -23,6 +23,6 @@ rep_user: rep
 rep_password: reppassword
 data_directory: /home/data
 system_packages:
-  - postgresql-9.5
-  - postgresql-9.5-prefix
-  - python-psycopg2
+  - postgresql95-server.x86_64
+  - postgresql95-contrib.x86_64
+  - postgresql95-libs.x86_64

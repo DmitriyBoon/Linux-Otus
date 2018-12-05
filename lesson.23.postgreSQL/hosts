@@ -1,0 +1,8 @@
+[pmasters]
+192.168.255.1 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[pslaves]
+192.168.255.2 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+192.168.255.3 ansible_port=22 ansible_user=vagrant ansible_ssh_pass=vagrant
+[postgres:children]
+pslaves
+pmasters
