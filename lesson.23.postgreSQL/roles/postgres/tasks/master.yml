@@ -1,25 +1,35 @@
 ---
     - name: Stop Postgresql
-      systemd: name=postgresql-9.5 state=stopped
+      systemd: 
+        name: postgresql-9.5 
+        state: stopped
 
     - name: run initdb on directory
       become_user: postgres
-      command: su - postgres -c "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
+      become_method: su
+      become: yes
+      command: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
 
     - name: Add master to pg_hba
       become_user: postgres
-       
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
-
+      
+      lineinfile: 
+        path: "/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf" 
+        line: "host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
+        create: yes
     - name: Add slaves IP to pg_hba.conf
       become_user: postgres
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host    replication     {{ rep_user }}     {{item}}/32  md5"
+      lineinfile: 
+        path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
+        line: "host    replication     {{ rep_user }}     {{item}}/32  md5"
       with_items:
         - "{{ groups['pslaves'] }}"
 
     - name: Add interface IP to listen on
       become_user: postgres
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf line="listen_addresses = '{{ inventory_hostname }}'"
+      lineinfile: 
+        path: "/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf" 
+        line: "listen_addresses = '{{ inventory_hostname }}'"
       
     - name: Start Postgresql service
       systemd: name=postgresql-9.5 state=started
@@ -30,15 +40,20 @@
 
     - name: Drop Replication user if exists
       become_user: postgres
-      shell: su - postgres -c "psql -c "drop user if exists {{ rep_user }};"
+      become_method: su
+      shell: psql -c "drop user if exists {{ rep_user }};"
 
     - name: Create a Rep User
       become_user: postgres
-      shell: su - postgres -c "psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';""
+      become_method: su
+      shell: psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"
 
     - name: Add postgres config directives
       become_user: postgres
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf line={{ item }}
+      become_method: su
+      lineinfile: 
+        path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
+        line: "{{ item }}"
       with_items:
         - "{{ postgres_vars }}"
 

@@ -1,44 +1,71 @@
 ---
     - name: Add master IP to pg_hba.conf
       become_user: postgres
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host    replication     {{ rep_user }}     {{item}}/32  md5"
+      lineinfile: 
+        path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
+        line: "host    replication     {{ rep_user }}     {{item}}/32  md5"
+        owner: postgres
+        group: postgres
+        mode: 0644
       with_items:
         - "{{ groups['pmasters'] }}"
 
     - name: Base Backup
       become_user: postgres
-      shell: su - postgres -c PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
+      become_method: su
+      shell: PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
       with_items:
         - "{{ groups['pmasters'] }}"
 
 
     - name: Add postgres config directives
       become_user: postgres
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf line={{ item }}
+      lineinfile: 
+        path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
+        owner: postgres
+        group: postgres
+        mode: 0644
+        line: "{{ item }}"
       with_items:
         - "{{ postgres_vars }}"
 
     - name: Add interface IP to listen on 
       become_user: postgres
-      lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf line="listen_addresses = '{{ inventory_hostname }}'"
+      lineinfile: 
+        path: /var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf 
+        line: "listen_addresses = '{{ inventory_hostname }}'"
+        owner: postgres
+        group: postgres
+        mode: 0644
 
     - name: Add master IP to pg_hba.conf
       become_user: postgres
-      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host  all  {{ db_user }}     {{item}}/32  trust"
+      lineinfile: 
+        path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
+        line: "host  all  {{ db_user }}     {{item}}/32  trust"
+        owner: postgres
+        group: postgres
+        mode: 0644
       with_items:
         - "{{ groups['pmasters'] }}"
 
     - name: create Recovery file
       become_user: postgres
-      lineinfile: dest={{ data_directory }}/recovery.conf create=True state=present line="{{ item }}" 
+      lineinfile: 
+        path: "{{ data_directory }}/recovery.conf" 
+        line: "{{ item }}" 
       with_items:
         - "{{ slave_recovery }}"
 
     - name: Add masters IP to recovery.conf
       become_user: postgres
-      lineinfile: dest={{ data_directory }}/recovery.conf line="primary_conninfo = 'host={{item}} port=5432 user={{ rep_user }} password={{ rep_password }}'"
+      lineinfile: 
+        path: "{{ data_directory }}/recovery.conf"
+        line: "primary_conninfo = 'host={{item}} port=5432 user={{ rep_user }} password={{ rep_password }}'"
       with_items:
         - "{{ groups['pmasters'] }}"
 
     - name: Start Slave Postgres Service
-      systemd: name=postgresql-9.5 state=started
+      systemd: 
+        name: postgresql-9.5 
+        state: started

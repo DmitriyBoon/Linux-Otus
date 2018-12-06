@@ -1,10 +1,10 @@
 ---
 - name: restart dovecot
-  service:
+  systemd:
     name: dovecot
     state: restarted
 
 - name: restart postfix
-  service:
+  systemd:
     name: postfix
     state: restarted
