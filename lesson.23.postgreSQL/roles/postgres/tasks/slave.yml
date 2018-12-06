@@ -1,20 +1,20 @@
 ---
     - name: Add master IP to pg_hba.conf
       become_user: postgres
-      lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf line="host    replication     {{ rep_user }}     {{item}}/32  md5"
+      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host    replication     {{ rep_user }}     {{item}}/32  md5"
       with_items:
         - "{{ groups['pmasters'] }}"
 
     - name: Base Backup
       become_user: postgres
-      shell: PGPASSWORD="{{rep_password}}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
+      shell: PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
       with_items:
         - "{{ groups['pmasters'] }}"
 
 
     - name: Add postgres config directives
       become_user: postgres
-      lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf line={{ item }}
+      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf line={{ item }}
       with_items:
         - "{{ postgres_vars }}"
 
@@ -24,7 +24,7 @@
 
     - name: Add master IP to pg_hba.conf
       become_user: postgres
-      lineinfile: dest=/var/lib/pgsql/{{ postgresql_version }}/data/pg_hba.conf line="host  all  {{ db_user }}     {{item}}/32  trust"
+      lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host  all  {{ db_user }}     {{item}}/32  trust"
       with_items:
         - "{{ groups['pmasters'] }}"
 

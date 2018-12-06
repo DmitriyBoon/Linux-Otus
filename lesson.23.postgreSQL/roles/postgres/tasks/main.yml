@@ -1,6 +1,6 @@
 ---
     - name: Check if Postgres is installed
-      stat: path=/var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf
+      stat: path=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf
       register: is_installed
 
     - name: Check if already a slave
