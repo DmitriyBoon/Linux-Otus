@@ -7,7 +7,7 @@
 
     - name: Base Backup
       become_user: postgres
-      shell: PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
+      shell: su - postgres -c PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
       with_items:
         - "{{ groups['pmasters'] }}"
 

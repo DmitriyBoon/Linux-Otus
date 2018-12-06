@@ -4,10 +4,11 @@
 
     - name: run initdb on directory
       become_user: postgres
-      command: /usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}
+      command: su - postgres -c "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
 
     - name: Add master to pg_hba
       become_user: postgres
+       
       lineinfile: dest=/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf line="host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
 
     - name: Add slaves IP to pg_hba.conf
@@ -29,11 +30,11 @@
 
     - name: Drop Replication user if exists
       become_user: postgres
-      shell: psql -c "drop user if exists {{ rep_user }};"
+      shell: su - postgres -c "psql -c "drop user if exists {{ rep_user }};"
 
     - name: Create a Rep User
       become_user: postgres
-      shell: psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"
+      shell: su - postgres -c "psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';""
 
     - name: Add postgres config directives
       become_user: postgres
