@@ -11,6 +11,8 @@
       - mysql-server
       - mysql-devel
       - python34-setuptools
+      - python-devel
+      - libevent-devel
     notify: restart mysql
   
   - name: easy_install-3.4 pip
@@ -31,8 +33,7 @@
     pip:
       name: "{{ item }}"
     loop:
-      - upgrade
-      - mysql-connector-python
+      - MySQL-python
 
   - name: Restore database
     mysql_db:
