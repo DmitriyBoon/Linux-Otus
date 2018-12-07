@@ -8,3 +8,8 @@
   systemd:
     name: postfix
     state: restarted
+
+- name: restart mysql
+  systemd:
+     name: mysql
+     state: restarted

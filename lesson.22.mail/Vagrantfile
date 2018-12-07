@@ -22,13 +22,13 @@ Vagrant.configure(2) do |config|
     mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
     sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     yum update -y && yum install epel-release -y && yum install ansible -y && yum install wget -y
-    wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
-    rpm -ivh mysql-community-release-el7-5.noarch.rpm
-    yum update -y
-    yum install mysql-server -y
-    service mysql start
-    mkdir /etc/postfix/certs
-    openssl req -new -x509 -days 3650 -nodes -out /etc/postfix/certs/cert.pem -keyout /etc/postfix/certs/key.pem
+    # wget http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+    # rpm -ivh mysql-community-release-el7-5.noarch.rpm
+    # yum update -y
+    # yum install mysql-server -y
+    # service mysql start
+    # mkdir /etc/postfix/certs
+    # openssl req -new -x509 -days 3650 -nodes -out /etc/postfix/certs/cert.pem -keyout /etc/postfix/certs/key.pem
     cp -a /vagrant/* /etc/ansible/
     cd /etc/ansible/
     ansible-playbook mail.yml
@@ -43,8 +43,8 @@ Vagrant.configure(2) do |config|
   mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
   sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
   systemctl restart sshd
-  yum install telnet
-  telnet 192.168.255.1 25
+  # yum install telnet
+  # telnet 192.168.255.1 25
   SHELL
 end
 
