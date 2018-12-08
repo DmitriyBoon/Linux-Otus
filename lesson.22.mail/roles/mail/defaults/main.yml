@@ -12,8 +12,8 @@ dovecot_auth_mechanisms:
 dovecot_force_imaps: True
 dovecot_force_pop3s: True
 dovecot_ssl: 'yes'
-dovecot_ssl_cert: '/etc/postfix/certs/cert.pem'
-dovecot_ssl_key: '/etc/postfix/certs/key.pem'
+dovecot_ssl_cert: '/etc/ssl/crt/cert.crt'
+dovecot_ssl_key: '/etc/ssl/private/privkey.pem'
 dovecot_listen:
 - '*'
 - '::'

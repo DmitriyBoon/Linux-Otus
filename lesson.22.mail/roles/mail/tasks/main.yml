@@ -1,3 +1,52 @@
 ---
-- include: dovecot.yml
-- include: postfix.yml
+  - name: install repo mysql
+    yum: 
+      name: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+      state: present
+  
+  - name: install packages
+    yum:
+      name: "{{ item }}"
+    loop:
+      - mysql-server
+      - mysql-devel
+      - python34-setuptools
+      - python-devel
+      - libevent-devel
+    notify: restart mysql
+  
+  - name: easy_install-3.4 pip
+    command: easy_install-3.4 pip
+  
+  - name: pip install
+    yum:
+      name: python-pip
+      state: present
+
+  - name: update pip
+    command: pip install --upgrade setuptools
+
+  - name: upgrade pip
+    command: pip install --upgrade pip
+
+  - name: install pip
+    pip:
+      name: "{{ item }}"
+    loop:
+      - MySQL-python
+
+  - name: Restore database
+    mysql_db:
+       name: "{{ postfix_dovecot_mysql_db_name }}"
+       state: import
+       target: /vagrant/schema.sql
+  
+  - name: Generate a Self Signed OpenSSL certificate
+    openssl_certificate:
+      path: /etc/ssl/crt/cert.crt
+      privatekey_path: /etc/ssl/private/privkey.pem
+      csr_path: /etc/ssl/csr/mail.csr
+      provider: selfsigned
+
+  - include: dovecot.yml
+  - include: postfix.yml
