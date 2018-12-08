@@ -35,6 +35,24 @@ CREATE TABLE `virtual_aliases` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
 
+* Добавить пользователя
+```
+INSERT INTO `servermail`.`virtual_users`
+(`id`, `domain_id`, `password` , `email`)
+VALUES
+('1', '1', ENCRYPT('firstpassword', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))), 'email1@example.com'),
+('2', '1', ENCRYPT('secondpassword', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))), 'email2@example.com');
+```
+* Дать права к базе пользователю 
+
+```
+mysql > GRANT SELECT ON servermail.* TO 'usermail'@'127.0.0.1' IDENTIFIED BY 'mailpassword';
+
+Сбросьте привилегии MySQL:
+
+mysql > FLUSH PRIVILEGES;
+```
+
 * Отправка письма
 
 ``` 
