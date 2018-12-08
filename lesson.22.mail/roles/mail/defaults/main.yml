@@ -2,8 +2,8 @@
 dovecot_protocols:
 - 'lmtp'
 - 'imap'
-ssl_certs_cert_path: '/etc/postfix/certs/cert.pem'
-ssl_certs_privkey_path: '/etc/postfix/certs/key.pem'
+ssl_certs_cert_path: '/etc/ssl/crt/cert.crt'
+ssl_certs_privkey_path: '/etc/ssl/private/privkey.pem'
 dovecot_mail_privileged_group: 'mail'
 dovecot_disable_plaintext_auth: 'yes'
 dovecot_auth_mechanisms:
