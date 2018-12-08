@@ -13,7 +13,7 @@
       - python34-setuptools
       - python-devel
       - libevent-devel
-    notify: restart mysql
+    notify: start mysql
   
   - name: easy_install-3.4 pip
     command: easy_install-3.4 pip
@@ -23,17 +23,21 @@
       name: python-pip
       state: present
 
-  - name: update pip
+  - name: update pip setuptools
     command: pip install --upgrade setuptools
 
   - name: upgrade pip
     command: pip install --upgrade pip
 
-  - name: install pip
+  - name: install pip modules
     pip:
       name: "{{ item }}"
     loop:
-      - MySQL-python
+      - pymysql
+      - pyopenssl
+
+  - name: start mysql
+    command: systemctl start mysql
 
   - name: Restore database
     mysql_db:
@@ -41,12 +45,29 @@
        state: import
        target: /vagrant/schema.sql
   
+  - name: mkdir ssl crt private csr
+    command: mkdir /etc/ssl/crt/ /etc/ssl/private/ /etc/ssl/csr/
+  
+  - name: Gen priv key
+    openssl_privatekey:
+      path: /etc/ssl/private/mailserv.pem
+  
+  - name: Gen csr 
+    openssl_csr:
+      path: /etc/ssl/csr/mailserv.csr
+      privatekey_path: /etc/ssl/private/mailserv.pem
+      country_name: RU
+      organization_name: OtusLesson
+      email_address: otus@ansible.com
+      common_name: mailserv
+
   - name: Generate a Self Signed OpenSSL certificate
     openssl_certificate:
-      path: /etc/ssl/crt/cert.crt
-      privatekey_path: /etc/ssl/private/privkey.pem
-      csr_path: /etc/ssl/csr/mail.csr
+      path: /etc/ssl/crt/mailserv.crt
+      privatekey_path: /etc/ssl/private/mailserv.pem
+      csr_path: /etc/ssl/csr/mailserv.csr
       provider: selfsigned
-
-  - include: dovecot.yml
+  
   - include: postfix.yml
+  - include: dovecot.yml
+  

@@ -2,14 +2,14 @@
 - name: restart dovecot
   systemd:
     name: dovecot
-    state: restarted
+    state: reloaded
 
 - name: restart postfix
   systemd:
     name: postfix
-    state: restarted
+    state: reloaded
 
-- name: restart mysql
+- name: start mysql
   systemd:
      name: mysql
-     state: restarted
+     state: started
