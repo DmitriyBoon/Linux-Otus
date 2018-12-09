@@ -75,3 +75,13 @@ Received: from mail (unknown [192.168.255.2])
 very good mail
 
 ```
+* Log
+
+```
+Dec  9 09:17:42 mailserv dovecot: lmtp(usermail@test.otus): msgid=unspecified: saved mail to INBOX
+Dec  9 09:17:42 mailserv dovecot: lmtp(17786): Disconnect from local: Successful quit
+Dec  9 09:17:42 mailserv postfix/lmtp[17785]: DE878C0A88: to=<usermail@test.otus>, relay=mailserv[private/dovecot-lmtp], delay=51, delays=51/0.03/0.02/0.06, dsn=2.0.0, status=sent (250 2.0.0 <usermail@test.otus> qIs0C7bdDFx6RQAAfXFM7g Saved)
+Dec  9 09:17:42 mailserv postfix/qmgr[17765]: DE878C0A88: removed
+Dec  9 09:17:45 mailserv postfix/smtpd[17777]: disconnect from unknown[192.168.255.2]
+
+```
