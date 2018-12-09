@@ -2,8 +2,8 @@
 dovecot_protocols:
 - 'lmtp'
 - 'imap'
-ssl_certs_cert_path: '/etc/ssl/crt/cert.crt'
-ssl_certs_privkey_path: '/etc/ssl/private/privkey.pem'
+ssl_certs_cert_path: '/etc/ssl/crt/mailserver.crt'
+ssl_certs_privkey_path: '/etc/ssl/private/mailserver.pem'
 dovecot_mail_privileged_group: 'mail'
 dovecot_disable_plaintext_auth: 'yes'
 dovecot_auth_mechanisms:
@@ -12,8 +12,8 @@ dovecot_auth_mechanisms:
 dovecot_force_imaps: True
 dovecot_force_pop3s: True
 dovecot_ssl: 'yes'
-dovecot_ssl_cert: '/etc/ssl/crt/cert.crt'
-dovecot_ssl_key: '/etc/ssl/private/privkey.pem'
+dovecot_ssl_cert: '/etc/ssl/crt/mailserver.crt'
+dovecot_ssl_key: '/etc/ssl/private/mailserver.pem'
 dovecot_listen:
 - '*'
 - '::'
@@ -24,8 +24,8 @@ postfix_dovecot_mysql_user: 'usermail'
 dovecot_mysql_password_query: 'SELECT email as user, password FROM virtual_users WHERE email=''%u'';'
 
 postfix_mysql_alias_query: 'SELECT destination FROM virtual_aliases WHERE source=''%s'';'
-postfix_mysql_domains_query: 'SELECT * FROM virtual_domains WHERE name=''%s'';'
-postfix_mysql_users_query: 'SELECT * FROM virtual_users WHERE email=''%s'';'
+postfix_mysql_domains_query: 'SELECT 1 FROM virtual_domains WHERE name=''%s'';'
+postfix_mysql_users_query: 'SELECT 1 FROM virtual_users WHERE email=''%s'';'
 
 postfix_inet_protocols: 'all'
 postfix_submission_smtpd_client_restrictions:

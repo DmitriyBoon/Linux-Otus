@@ -45,6 +45,13 @@
        state: import
        target: /vagrant/schema.sql
   
+  - name: add mysql user for mail 
+    mysql_user:
+      name: usermail
+      password: 'password'
+      priv: '*.*:ALL,GRANT'
+      state: present
+     
   - name: mkdir ssl crt private csr
     command: mkdir /etc/ssl/crt/ /etc/ssl/private/ /etc/ssl/csr/
   
@@ -59,7 +66,7 @@
       country_name: RU
       organization_name: OtusLesson
       email_address: otus@ansible.com
-      common_name: mailserv
+      common_name: servermail
 
   - name: Generate a Self Signed OpenSSL certificate
     openssl_certificate:
