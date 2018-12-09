@@ -1,5 +1,8 @@
 # Почта: SMTP, IMAP, POP3
-
+```
+ansible roles
+Postfix - Dovecot 
+```
 Запускаем Vagrant 
 Ждем пока отработает, сервер разворачивается из ansible роли
 
