@@ -4,17 +4,12 @@
       lineinfile: 
         path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
         line: "host    replication     {{ rep_user }}     {{item}}/32  md5"
-        owner: postgres
-        group: postgres
-        mode: 0644
-      with_items:
+      loop:
         - "{{ groups['pmasters'] }}"
 
     - name: Base Backup
-      become_user: postgres
-      become_method: su
-      shell: PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
-      with_items:
+      command: PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
+      loop:
         - "{{ groups['pmasters'] }}"
 
 
@@ -22,11 +17,8 @@
       become_user: postgres
       lineinfile: 
         path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
-        owner: postgres
-        group: postgres
-        mode: 0644
         line: "{{ item }}"
-      with_items:
+      loop:
         - "{{ postgres_vars }}"
 
     - name: Add interface IP to listen on 
@@ -34,35 +26,26 @@
       lineinfile: 
         path: /var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf 
         line: "listen_addresses = '{{ inventory_hostname }}'"
-        owner: postgres
-        group: postgres
-        mode: 0644
 
     - name: Add master IP to pg_hba.conf
-      become_user: postgres
       lineinfile: 
         path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
         line: "host  all  {{ db_user }}     {{item}}/32  trust"
-        owner: postgres
-        group: postgres
-        mode: 0644
-      with_items:
+      loop:
         - "{{ groups['pmasters'] }}"
 
     - name: create Recovery file
-      become_user: postgres
       lineinfile: 
         path: "{{ data_directory }}/recovery.conf" 
         line: "{{ item }}" 
-      with_items:
+      loop:
         - "{{ slave_recovery }}"
 
     - name: Add masters IP to recovery.conf
-      become_user: postgres
       lineinfile: 
         path: "{{ data_directory }}/recovery.conf"
         line: "primary_conninfo = 'host={{item}} port=5432 user={{ rep_user }} password={{ rep_password }}'"
-      with_items:
+      loop:
         - "{{ groups['pmasters'] }}"
 
     - name: Start Slave Postgres Service

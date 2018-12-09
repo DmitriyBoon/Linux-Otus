@@ -26,3 +26,5 @@ system_packages:
   - postgresql95-server.x86_64
   - postgresql95-contrib.x86_64
   - postgresql95-libs.x86_64
+  - postgresql-devel
+  - python-pip

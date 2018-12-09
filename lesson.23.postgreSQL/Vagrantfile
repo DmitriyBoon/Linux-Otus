@@ -12,7 +12,7 @@ Vagrant.configure(2) do |config|
 
 
   config.vm.provider "virtualbox" do |v|
-	  v.memory = 256
+	  v.memory = 1024
   end
 
   config.vm.define "master" do |master|
@@ -22,8 +22,8 @@ Vagrant.configure(2) do |config|
     mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
     sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
     systemctl restart sshd
-    rpm -Uvh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
-    yum update -y
+    # rpm -Uvh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
+    yum install epel-release -y && yum update -y
   SHELL
   end
 
@@ -34,8 +34,8 @@ Vagrant.configure(2) do |config|
   mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
   sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
   systemctl restart sshd
-  rpm -Uvh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
-  yum update -y
+  # rpm -Uvh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
+  yum install epel-release -y && yum update -y
   SHELL
 end
 
@@ -46,9 +46,9 @@ config.vm.define "slave2" do |slave2|
 mkdir -p ~root/.ssh; cp ~vagrant/.ssh/auth* ~root/.ssh
 sed -i '65s/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
+yum install epel-release -y && yum update -y
 yum install ansible -y
-rpm -Uvh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
-yum update -y
+# rpm -Uvh http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
 cp -a /vagrant/* /etc/ansible/
 cd /etc/ansible
 # ansible-playbook postgres.yml

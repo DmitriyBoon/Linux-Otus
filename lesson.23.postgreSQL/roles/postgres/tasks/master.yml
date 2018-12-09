@@ -4,25 +4,19 @@
         name: postgresql-9.5 
         state: stopped
 
-    - name: run initdb on directory
-      become_user: postgres
-      become_method: su
-      become: yes
-      command: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
+    # - name: run initdb on directory
+    #   raw: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
 
     - name: Add master to pg_hba
-      become_user: postgres
-      
       lineinfile: 
         path: "/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf" 
         line: "host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
-        create: yes
+        
     - name: Add slaves IP to pg_hba.conf
-      become_user: postgres
       lineinfile: 
         path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
         line: "host    replication     {{ rep_user }}     {{item}}/32  md5"
-      with_items:
+      loop:
         - "{{ groups['pslaves'] }}"
 
     - name: Add interface IP to listen on
@@ -32,30 +26,30 @@
         line: "listen_addresses = '{{ inventory_hostname }}'"
       
     - name: Start Postgresql service
-      systemd: name=postgresql-9.5 state=started
+      systemd: 
+        name: postgresql-9.5 
+        state: started
 
     - name: Create {{db_name}} database
-      become_user: postgres
-      postgresql_db: name={{ db_name }} login_user={{ db_user }} login_password={{ db_pass }}
+      postgresql_db: 
+         name: "{{ db_name }}" 
+         login_use: "{{ db_user }}"
+         login_password: "{{ db_pass }}"
 
     - name: Drop Replication user if exists
-      become_user: postgres
-      become_method: su
-      shell: psql -c "drop user if exists {{ rep_user }};"
+      command: psql -c "drop user if exists {{ rep_user }};"
 
     - name: Create a Rep User
-      become_user: postgres
-      become_method: su
-      shell: psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"
+      command: psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"
 
     - name: Add postgres config directives
-      become_user: postgres
-      become_method: su
       lineinfile: 
         path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
         line: "{{ item }}"
-      with_items:
+      loop:
         - "{{ postgres_vars }}"
 
     - name: Restart Postgresql service
-      systemd: name=postgresql-9.5 state=restarted
+      systemd: 
+        name: postgresql-9.5 
+        state: restarted

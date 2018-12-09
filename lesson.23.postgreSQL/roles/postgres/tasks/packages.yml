@@ -1,10 +1,26 @@
 ---
-    - name: install postgres packages
-      yum:
-         name: "{{ item }}"
-      loop:
-        - "{{ system_packages }}"
-      sudo: yes
+  - name: install postgres repo
+    yum:
+      name: http://yum.postgresql.org/9.5/redhat/rhel-7-x86_64/pgdg-centos95-9.5-2.noarch.rpm
+      state: present
 
-    - name: create .conf
-      include: data_dir.yml
+  - name: install postgres packages
+    yum:
+      name: "{{ item }}"
+    loop:
+      - "{{ system_packages }}"
+  
+  - name: pip install Requirements
+    pip:
+      name: "{{ item }}"
+    loop: 
+      - psycopg2-binary
+      - psycopg2
+  
+  - name: upgrade pip
+    command: "{{ item }}"
+    loop: 
+      - pip install --upgrade pip
+    
+  - name: create .conf
+    include: data_dir.yml
