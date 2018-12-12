@@ -1,21 +1,27 @@
 ---
-    - name: create postgres.conf
-      template: 
-        src: postgresql.conf.j2
-        dest: /usr/pgsql-"{{ postgresql_version }}"/bin/postgresql.conf
+    - name: run initdb on directory
+      raw: su postgres -c '/usr/pgsql-"{{ postgresql_version }}"/bin/initdb -E UTF8 --locale ru_RU.UTF-8 -D /var/lib/pgsql/"{{ postgresql_version }}"/data'
+    
+    # - name: create postgres.conf
+    #   template: 
+    #     src: postgresql.conf.j2
+    #     dest: /usr/pgsql-"{{ postgresql_version }}"/bin/postgresql.conf
+    #   when: 
+    #     - "'pmasters' in group_names"
 
-    - name: create pg_hba.conf conf
-      template: 
-        src: pg_hba.conf.j2
-        dest: /usr/pgsql-"{{ postgresql_version }}"/bin/pg_hba.conf
+    # - name: create pg_hba.conf conf
+    #   template: 
+    #     src: pg_hba.conf.j2
+    #     dest: /usr/pgsql-"{{ postgresql_version }}"/bin/pg_hba.conf
+    #   when:  
+    #     - "'pmasters' in group_names"
     
     - name: change postgres data directory in config files
       lineinfile: 
         path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
         line: "data_directory = '{{ data_directory }}'"
     
-    - name: run initdb on directory
-      raw: su postgres -c '/usr/pgsql-"{{ postgresql_version }}"/bin/initdb -E UTF8 --locale ru_RU.UTF-8 -D /var/lib/pgsql/"{{ postgresql_version }}"/data'
+    
 
     - name: Restart Postgresql service
       systemd: 

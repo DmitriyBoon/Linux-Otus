@@ -1,23 +1,23 @@
 ---
-    - name: Check if Postgres is installed
-      stat: path=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf
-      register: is_installed
+    # - name: Check if Postgres is installed
+    #   stat: path=/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf
+    #   register: is_installed
 
-    - name: Check if already a slave
-      stat: path={{ data_directory }}/recovery.conf
-      register: recovery
+    # - name: Check if already a slave
+    #   stat: path={{ data_directory }}/recovery.conf
+    #   register: recovery
 
     - name: Install Packages
       include: packages.yml
       when: is_installed.stat.exists == False
 
-    - name: Stop Slave Postgres service
-      systemd: 
-        name: postgresql-9.5 
-        state: stopped
-      when: 
-        - "'pslaves' in group_names"
-        - recovery.stat.exists == False
+    # - name: Stop Slave Postgres service
+    #   systemd: 
+    #     name: postgresql-9.5 
+    #     state: stopped
+    #   when: 
+    #     - "'pslaves' in group_names"
+    #     - recovery.stat.exists == False
 
     - name: Master Setup
       include: master.yml
