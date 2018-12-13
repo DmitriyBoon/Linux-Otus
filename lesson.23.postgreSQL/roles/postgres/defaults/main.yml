@@ -1,4 +1,7 @@
 ---
+maste_ip: 192.168.255.1
+slave_ip: 192.168.255.2
+slave2_ip: 192.168.255.3
 postgresql_version: 9.5
 postgres_vars:
  - max_connections = 100

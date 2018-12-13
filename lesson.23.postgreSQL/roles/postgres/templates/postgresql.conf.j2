@@ -1,12 +1,5 @@
 # -----------------------------
-# PostgreSQL configuration file
+# PostgreSQL configuration file from defaults/main
 # -----------------------------
 #
-listen_addresses = '*'
-port = 5433
-wal_level = hot_standby
-archive_mode = on
-archive_command = 'cd .'
-wal_keep_segments = 64
-max_wal_senders = 8
-hot_standby = on
+{{ postgres_vars }}
