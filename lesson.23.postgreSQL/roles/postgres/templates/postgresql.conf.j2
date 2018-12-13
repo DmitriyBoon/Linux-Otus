@@ -2,4 +2,5 @@
 # PostgreSQL configuration file from defaults/main
 # -----------------------------
 #
+listen_addresses = {{ %if master_ip }}
 {{ postgres_vars }}
