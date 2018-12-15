@@ -22,5 +22,5 @@
     loop: 
       - pip install --upgrade pip
     
-  - name: create .conf
-    include: data_dir.yml
+  # - name: create .conf
+  #   include: data_dir.yml

@@ -4,8 +4,8 @@
         name: postgresql-9.5 
         state: stopped
 
-    # - name: run initdb on directory
-    #   raw: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
+    - name: run initdb on directory
+      raw: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
 
     - name: create pg_hba.conf
       template:
