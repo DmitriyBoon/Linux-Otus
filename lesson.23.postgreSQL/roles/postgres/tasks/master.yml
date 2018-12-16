@@ -1,78 +1,66 @@
 ---
-    - name: Stop Postgresql
-      systemd: 
-        name: postgresql-9.5 
-        state: stopped
+    # - name: Stop Postgresql
+    #   systemd: 
+    #     name: postgresql-9.5 
+    #     state: stopped
 
-    - name: run initdb on directory
-      raw: "/usr/pgsql-{{ postgresql_version }}/bin/initdb -D {{ data_directory }}"
-
-    - name: create pg_hba.conf
-      template:
-        src: pg_hba.conf.j2
-        dest: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf
-        # owner: root
-        # group: root
-        # mode: 0644
-        
-    - name: create postgresql.conf
-      template:
-        src: postgresql.conf.j2
-        dest: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf
-
-    - name: Add master to pg_hba
-      lineinfile: 
-        path: "/usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf" 
-        line: "host    all    {{ db_user }}     {{ inventory_hostname }}/32  trust"
-        
-    - name: Add slaves IP to pg_hba.conf
-      lineinfile: 
-        path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
-        line: "host    replication     {{ rep_user }}     {{item}}/32  md5"
-      loop:
-        - "{{ groups['pslaves'] }}"
-
-    # - name: Add interface IP to listen on
-    #   become_user: postgres
-    #   lineinfile: 
-    #     path: "/usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf" 
-    #     line: "listen_addresses = '{{ inventory_hostname }}'"
-      
-    - name: Start Postgresql service
-      systemd: 
-        name: postgresql-9.5 
-        state: started
+    # - name: run initdb on directory
+    #   raw: su postgres -c '/usr/pgsql-"{{ postgresql_version }}"/bin/initdb -E UTF8 -D /var/lib/pgsql/"{{ postgresql_version }}"/data'
+    - name: initdb master
+      remote_user: postgres
+      command: /usr/pgsql-9.5/bin/postgresql95-setup initdb
+    
+    - name: start postgres
+      command: systemctl start postgresql-9.5
 
     - name: Create {{db_name}} database
       postgresql_db:
         name: test 
         encoding: UTF-8
         template: template0
-        # login_use: "{{ db_user }}"
-        # login_password: "{{ db_pass }}"
 
-    - name: Drop Replication user if exists
-      raw: su postgres -c 'psql -c "drop user if exists {{ rep_user }};"'
-    
     - name: Create rep user
       postgresql_user:
         db: test
         name: rep
         password: rep_password
+        role_attr_flags: Replication
         priv: "CONNECT/products:ALL"
         expires: infinity
 
-    # - name: Create a Rep User
-    #   raw: su postgres -c 'psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"'
-
-    - name: Add postgres config directives
-      lineinfile: 
-        path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
-        line: "{{ item }}"
-      loop:
-        - "{{ postgres_vars }}"
-
-    - name: Restart Postgresql service
+    - name: create pg_hba.conf
+      template:
+        src: pg_hba.conf.j2
+        dest: /var/lib/pgsql/9.5/data/pg_hba.conf
+           
+    - name: create postgresql.conf
+      template:
+        src: postgresql.conf.j2
+        dest: /var/lib/pgsql/9.5/data/postgresql.conf
+    
+    - name: start Postgresql service
       systemd: 
+        enabled: yes
         name: postgresql-9.5 
-        state: restarted
+        state: started
+    
+
+    
+
+ 
+    # - name: Drop Replication user if exists
+    #   raw: su - postgres -c 'psql -c "drop user if exists {{ rep_user }};"'
+    
+  
+
+    # - name: Create a Rep User
+    #   raw: su - postgres -c 'psql -c "CREATE USER {{ rep_user }} REPLICATION LOGIN CONNECTION LIMIT 5 ENCRYPTED PASSWORD '{{ rep_password }}';"'
+
+    # - name: Add postgres config directives
+    #   lineinfile: 
+    #     path: /var/lib/pgsql/9.5/data/postgresql.conf 
+    #     line: "{{ item }}"
+    #   loop:
+    #     - "{{ postgres_vars }}"
+
+   

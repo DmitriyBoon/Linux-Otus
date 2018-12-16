@@ -1,0 +1,37 @@
+---
+- name: Launch Master
+  vars:
+    key_name: Ansible
+    instance_type: t2.micro
+    security_group: blueneutron
+    image: ami-f5d7f195
+    region: us-west-1
+  ec2:
+      key_name: "{{ key_name }}"
+      group: "{{ security_group }}"
+      instance_type: "{{ instance_type }}"
+      image: "{{ image }}"
+      wait: true
+      region: "{{ region }}"
+      vpc_subnet_id: subnet-278b887f
+      assign_public_ip: yes
+      instance_tags:
+        Name: heinz57-M
+        pg: pg
+        group: pg_master
+  register: ec2
+
+- name: Add new instance to host group
+  add_host:
+    hostname: "{{ item.public_ip }}"
+    groupname: master
+  with_items: "{{ ec2.instances }}"
+
+- name: Wait for SSH to come up
+  wait_for:
+    host: "{{ item.public_dns_name }}"
+    port: 22
+    delay: 60
+    timeout: 320
+    state: started
+  with_items: "{{ ec2.instances }}"

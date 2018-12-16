@@ -1,0 +1,19 @@
+---
+# This will install Postgres
+- name: install the postgres rpm from a remote repo
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+    state: present
+
+
+- name: Install Postgres package
+  yum: name={{ item }} state=installed
+  with_items:
+    - postgresql96-server 
+    - postgresql96-contrib
+
+- name: Copy repl_db_init
+  copy: src=../files/repl_db_init.sh dest=/tmp/repl_db_init.sh
+
+- name: Execute repl_db_init
+  command: /tmp/repl_db_init.sh

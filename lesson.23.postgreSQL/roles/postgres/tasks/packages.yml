@@ -10,6 +10,11 @@
     loop:
       - "{{ system_packages }}"
   
+  - name: upgrade pip
+    command: "{{ item }}"
+    loop: 
+      - pip install --upgrade pip
+  
   - name: pip install Requirements
     pip:
       name: "{{ item }}"
@@ -17,10 +22,3 @@
       - psycopg2-binary
       - psycopg2
   
-  - name: upgrade pip
-    command: "{{ item }}"
-    loop: 
-      - pip install --upgrade pip
-    
-  # - name: create .conf
-  #   include: data_dir.yml

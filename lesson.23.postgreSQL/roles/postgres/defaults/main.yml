@@ -16,8 +16,8 @@ postgres_vars:
  - wal_level = 'hot_standby'
 
 slave_recovery:
- - trigger_file = '/tmp/postgresql.trigger.5432'
- - standby_mode = 'on'
+trigger: '/tmp/postgresql.trigger.5432'
+standby: 'on'
 
 db_user: postgres
 db_name: test

@@ -1,0 +1,25 @@
+---
+# #Create the instance
+# - hosts: localhost
+#   connection: local
+#   gather_facts: false
+#   roles:
+#     - ec2_provision
+
+#Configure
+- hosts: pmasters
+  gather_facts: false
+  remote_user: vagrant
+  become: yes
+  roles:
+    - pg_master
+
+- hosts: pslaves
+  gather_facts: false
+  remote_user: vagrant 
+  become: yes
+  roles:
+    - pg_repl
+
+# update load balancer
+  # TODO

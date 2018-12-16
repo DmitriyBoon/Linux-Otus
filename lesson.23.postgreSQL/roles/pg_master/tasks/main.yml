@@ -1,0 +1,36 @@
+---
+# This will install Postgres
+- name: install the postgres rpm from a remote repo
+  yum:
+    name: https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+    state: present
+
+
+- name: Install Postgres package
+  yum: 
+    name: "{{ item }}"
+    state: installed
+  loop:
+    - postgresql96-server 
+    - postgresql96-contrib
+
+- name: Copy db_init
+  copy: 
+    src: /etc/ansible/roles/pg_master/files/db_init.sh 
+    dest: /tmp/db_init.sh
+    mode: u=rwx,g=rx,o=rx
+
+- name: Execute db_init
+  command: /tmp/db_init.sh
+
+- name: create replication account
+  command: su - postgres -c 'psql -c "create user replicador replication;"'
+
+- name: Modfiy db config files
+  copy: 
+    src: /etc/ansible/roles/pg_master/files/modify_db_cfg.sh 
+    dest: /tmp/modify_db_cfg.sh
+    mode: u=rwx,g=rx,o=rx
+
+- name: Execute modify db config
+  command: /tmp/modify_db_cfg.sh

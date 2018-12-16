@@ -1,0 +1,3 @@
+---
+- include: master_provision.yml #Create the instance
+- include: repl_provision.yml #Create the instance

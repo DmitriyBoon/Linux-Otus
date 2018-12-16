@@ -1,54 +1,37 @@
 ---
-    - name: Add master IP to pg_hba.conf
-      become_user: postgres
-      lineinfile: 
-        path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
-        line: "host    replication     {{ rep_user }}     {{item}}/32  md5"
-      loop:
-        - "{{ groups['pmasters'] }}"
+    # - name: stop postgresql-9.5
+    #   systemd:
+    #     name: postgresql-9.5
+    #     state: stopped
+    
+    - name: initdb slave
+      remote_user: postgres
+      command: /usr/pgsql-9.5/bin/postgresql95-setup initdb
+    
+    - name: create slave pg_hba.conf
+      template:
+        src: pg_hba.conf.j2
+        dest: /var/lib/pgsql/9.5/data/pg_hba.conf 
+    
+    - name: create slave pg_hba.conf
+      template:
+        src: pg_hba.conf.j2
+        dest: /var/lib/pgsql/9.5/data/pg_hba.conf
 
-    - name: Base Backup
-      command: PGPASSWORD="{{ rep_password }}" pg_basebackup -h {{ item }} -D {{ data_directory }} -U {{ rep_user}} -v -w
-      loop:
-        - "{{ groups['pmasters'] }}"
+    # - name: Base Backup
+    #   command: su - postgres -c "pg_basebackup -h 192.168.255.1 -D /var/lib/pgsql/"{{ postgresql_version }}"/data -R -P -U replication --xlog-method=stream"
+    #   environment:
+    #     PATH: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    #   loop:
+    #     - "{{ groups['pmasters'] }}"
 
-
-    - name: Add postgres config directives
-      become_user: postgres
-      lineinfile: 
-        path: /usr/pgsql-{{ postgresql_version }}/bin/postgresql.conf 
-        line: "{{ item }}"
-      loop:
-        - "{{ postgres_vars }}"
-
-    - name: Add interface IP to listen on 
-      become_user: postgres
-      lineinfile: 
-        path: /var/lib/pgsql/{{ postgresql_version }}/data/postgresql.conf 
-        line: "listen_addresses = '{{ inventory_hostname }}'"
-
-    - name: Add master IP to pg_hba.conf
-      lineinfile: 
-        path: /usr/pgsql-{{ postgresql_version }}/bin/pg_hba.conf 
-        line: "host  all  {{ db_user }}     {{item}}/32  trust"
-      loop:
-        - "{{ groups['pmasters'] }}"
-
-    - name: create Recovery file
-      lineinfile: 
-        path: "{{ data_directory }}/recovery.conf" 
-        line: "{{ item }}" 
-      loop:
-        - "{{ slave_recovery }}"
-
-    - name: Add masters IP to recovery.conf
-      lineinfile: 
-        path: "{{ data_directory }}/recovery.conf"
-        line: "primary_conninfo = 'host={{item}} port=5432 user={{ rep_user }} password={{ rep_password }}'"
-      loop:
-        - "{{ groups['pmasters'] }}"
+    - name: create recovery.conf
+      template:
+        src: recovery.conf.j2
+        dest: /var/lib/pgsql/9.5/data/recovery.conf
 
     - name: Start Slave Postgres Service
       systemd: 
-        name: postgresql-9.5 
-        state: started
+         name: postgresql-9.5
+         enabled: yes 
+         state: started
