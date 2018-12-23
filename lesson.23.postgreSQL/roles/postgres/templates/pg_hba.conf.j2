@@ -1,5 +1,5 @@
 # PostgreSQL Client Authentication Configuration File
 # ===================================================
-host    test     rep       192.168.255.3/32      trust
-host    test     rep       192.168.255.2/32      trust
-host    all      postgres       127.0.0.1/32     trust
+local   all     all       md5
+host    replication     all       192.168.255.0/24            md5
+host    testdb     repluser       192.168.255.0/24            md5
