@@ -1,5 +1,8 @@
 
 # PostgreSQL Master - Slave
+```
+Конфиги в templates https://github.com/DmitriyBoon/otus-linux/tree/master/lesson.23.postgreSQL/roles/postgres/templates
+```
 
 * Устанавливаем master - slaves
 
