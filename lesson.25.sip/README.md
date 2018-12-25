@@ -2,7 +2,7 @@
 
 * sip show channels
 ```
-srv-elastix1*CLI> sip show channels
+srv-asterx1*CLI> sip show channels
 Peer             User/ANR         Call ID          Format           Hold     Last Message    Expiry     Peer      
 XXXXXXXX
 XXXXXXXX
@@ -12,7 +12,7 @@ XXXXXXXX
 
 * sip show channel 10e15ff17755d60
 ```
-srv-elastix1*CLI> sip show channel 10e15ff17755d60
+srv-asterx1*CLI> sip show channel 10e15ff17755d60
 
   * SIP Call
   Curr. trans. direction:  Outgoing
