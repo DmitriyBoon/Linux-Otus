@@ -2,6 +2,10 @@
 
 Влючаем debag 
 
+asterisk -rvvvv
+sip set debug on
+core set debug 5
+core set verbose 5
 
 * debag
 ```
