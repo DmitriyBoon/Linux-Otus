@@ -94,8 +94,8 @@ relay-log = /var/log/mysql/mysql-relay-bin.log
 log_bin = /var/log/mysql/mysql-bin.log
 
 binlog_do_db = bet
-replicate-wild-ignore-table==bet.events_on_demand
-replicate-wild-ignore-table==bet.v_same_event
+replicate-ignore-table = bet.events_on_demand
+replicate-ignore-table = bet.v_same_event
 
 
 CHANGE MASTER TO MASTER_HOST='192.168.100.11', MASTER_USER='repl', MASTER_PASSWORD='password', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 318;
@@ -105,7 +105,7 @@ Query OK, 0 rows affected, 1 warning (0.00 sec)
 
 mysql> SHOW SLAVE STATUS\G
 *************************** 1. row ***************************
-               Slave_IO_State: Waiting for master to send event
+               Slaqve_IO_State: Waiting for master to send event
                   Master_Host: 192.168.100.11
                   Master_User: repl
                   Master_Port: 3306
