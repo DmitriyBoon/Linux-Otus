@@ -1,6 +1,6 @@
 # Mysql репликация master-slave
 
-Vagrant up  
+Vagrant up  разворачиваем стенд 
 
 
 
