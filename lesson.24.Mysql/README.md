@@ -1,4 +1,4 @@
-# Mysql репликация мастер слайв
+# Mysql репликация master-slave
 
 Vagrant up  
 
