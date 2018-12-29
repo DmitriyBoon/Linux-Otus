@@ -26,6 +26,21 @@ Saving to: `bet-4560-4974c3.dmp'
 
 на мастере
 ```
+mysql> show tables;
++---------------------+
+| Tables_in_bet       |
++---------------------+
+| bookmaker           |
+| competition         |
+| events_on_demand    |
+| market              |
+| odds                |
+| outcome             |
+| v_same_event        |
++---------------------+
+7 rows in set (0.01 sec)
+
+
 добавляем в /etc/mysql/my.cfg
 
 server-id = 1
