@@ -94,6 +94,7 @@ relay-log = /var/log/mysql/mysql-relay-bin.log
 log_bin = /var/log/mysql/mysql-bin.log
 
 binlog_do_db = bet
+replicate-do-db = bet
 replicate-ignore-table = bet.events_on_demand
 replicate-ignore-table = bet.v_same_event
 
