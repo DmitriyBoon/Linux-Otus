@@ -1,9 +1,9 @@
 18
-mysql-bin.000002
-519
+mysql-bin.000003
+318
 192.168.100.11
 repl
-!OtusLinux2018
+password
 3306
 60
 0
@@ -16,3 +16,4 @@ repl
 1800.000
 
 0
+

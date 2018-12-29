@@ -15,76 +15,80 @@ Length: 117778 (115K) [application/octet-stream]
 Saving to: `bet-4560-4974c3.dmp'
 
 100%[======================================================================================================>] 117,778     --.-K/s   in 0.009s
-
+  
 2018-12-24 22:11:37 (12.5 MB/s) - `bet-4560-4974c3.dmp' saved [117778/117778]
 
 ```
 
 * Импортируем
 
+
+
+на мастере
 ```
-mysql> show databases;
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| bet                |
-| mysql              |
-| performance_schema |
-+--------------------+
-4 rows in set (0.01 sec)
+добавляем в /etc/mysql/my.cfg
+
+server-id = 1
+
+log_bin = /var/log/mysql/mysql-bin.log
+
+binlog_do_db = bet
+
+mysql> GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%' IDENTIFIED BY 'password';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.00 sec)
 
 mysql> use bet;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
 Database changed
+mysql> FLUSH TABLES WITH READ LOCK;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000003 |      318 | sample       |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+
+
+ mysqldump --triggers --routines --master-data --ignore-table=bet.events_on_demand --ignore-table=bet.v_same_event -uroot -proot bet > master.sql
+```
+на слейве
+
+```
 mysql> show tables;
-Empty set (0.00 sec)
++---------------+
+| Tables_in_bet |
++---------------+
+| bookmaker     |
+| competition   |
+| market        |
+| odds          |
+| outcome       |
++---------------+
 
-mysql> source /home/bet.dmp
-Query OK, 0 rows affected (0.00 sec)
+добавляем в /etc/mysql/my.cfg
+server-id = 2
+relay-log = /var/log/mysql/mysql-relay-bin.log
+log_bin = /var/log/mysql/mysql-bin.log
 
-Query OK, 0 rows affected (0.00 sec)
+binlog_do_db = bet
+replicate-wild-ignore-table==bet.events_on_demand
+replicate-wild-ignore-table==bet.v_same_event
 
-Query OK, 0 rows affected (0.00 sec)
 
-```
-
-* Создаем пользователя, даем права, идем на мастера.
-
-```
-mysql> CREATE USER 'repl'@'localhost' IDENTIFIED BY '!OtusLinux2018';
-Query OK, 0 rows affected (0.00 sec)
-
-mysql> SELECT user,host FROM mysql.user where user='repl'
-    -> ;
-+------+-----------+
-| user | host      |
-+------+-----------+
-| repl | %         |
-| repl | localhost |
-+------+-----------+
-2 rows in set (0.00 sec)
-
-mysql> GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%' IDENTIFIED BY '!OtusLinux2018';
-Query OK, 0 rows affected (0.00 sec)
-
-mysql> GRANT REPLICATION SLAVE ON *.* TO 'repl'@'localhost' IDENTIFIED BY '!OtusLinux2018';
-Query OK, 0 rows affected (0.00 sec)
-
-```
-
-* Запускаем slave
-
-```
-mysql> STOP SLAVE;
-Query OK, 0 rows affected (0.00 sec)
-
-mysql> CHANGE MASTER TO MASTER_HOST='192.168.100.11', MASTER_USER='repl', MASTER_PASSWORD='!OtusLinux2018', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 107;
-Query OK, 0 rows affected (0.01 sec)
+CHANGE MASTER TO MASTER_HOST='192.168.100.11', MASTER_USER='repl', MASTER_PASSWORD='password', MASTER_LOG_FILE = 'mysql-bin.000001', MASTER_LOG_POS = 318;
 
 mysql> START SLAVE;
-Query OK, 0 rows affected (0.00 sec)
+Query OK, 0 rows affected, 1 warning (0.00 sec)
 
-mysql>  SHOW SLAVE STATUS\G
+mysql> SHOW SLAVE STATUS\G
 *************************** 1. row ***************************
                Slave_IO_State: Waiting for master to send event
                   Master_Host: 192.168.100.11
@@ -92,52 +96,11 @@ mysql>  SHOW SLAVE STATUS\G
                   Master_Port: 3306
                 Connect_Retry: 60
               Master_Log_File: mysql-bin.000002
-          Read_Master_Log_Pos: 519
+          Read_Master_Log_Pos: 318
                Relay_Log_File: mysqld-relay-bin.000002
-                Relay_Log_Pos: 400
-        Relay_Master_Log_File: mysql-bin.000001
+                Relay_Log_Pos: 464
+        Relay_Master_Log_File: mysql-bin.000002
              Slave_IO_Running: Yes
-            Slave_SQL_Running: No
-              Replicate_Do_DB:
+            Slave_SQL_Running: Yes
 
 ```
-
-
-* Проверяем, на мастере
-```
- use bet;
-Reading table information for completion of table and column names
-You can turn off this feature to get a quicker startup with -A
-
-Database changed
-mysql> INSERT INTO bookmaker (id,bookmaker_name) VALUES(1,'1xbet');
-Query OK, 1 row affected (0.00 sec)
-
-mysql>  SELECT * FROM bookmaker;
-+----+----------------+
-| id | bookmaker_name |
-+----+----------------+
-|  1 | 1xbet          |
-|  4 | betway         |
-|  5 | bwin           |
-|  6 | ladbrokes      |
-|  3 | unibet         |
-+----+----------------+
-5 rows in set (0.00 sec)
-```
-* На слейве
-
-```
-mysql>  SELECT * FROM bookmaker;
-+----+----------------+
-| id | bookmaker_name |
-+----+----------------+
-|  1 | 1xbet          |
-|  4 | betway         |
-|  5 | bwin           |
-|  6 | ladbrokes      |
-|  3 | unibet         |
-+----+----------------+
-5 rows in set (0.00 sec)
-```
-
