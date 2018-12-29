@@ -1,12 +1,12 @@
 # SIP телефония
 
 Влючаем debag 
-
+```
 asterisk -rvvvv
 sip set debug on
 core set debug 5
 core set verbose 5
-
+```
 * debag
 ```
 <--- SIP read from TLS:192.168.32.239:5060 --->
