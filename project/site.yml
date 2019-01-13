@@ -1,0 +1,31 @@
+---
+- name: update all servers
+  hosts: all
+  become: true
+  roles:
+    - common
+
+- name: update all servers
+  hosts: proxy
+  become: true
+  vars:
+    web_server: 
+        - 192.168.50.5:80
+        - 192.168.50.6:80
+        - 192.168.50.7:80
+  roles:
+    - proxy
+
+- name: update all servers
+  hosts: mysql
+  become: true
+  roles:
+    - database
+
+- name: update all servers
+  hosts: web
+  become: true
+  vars:
+    document_root: /vagrant
+  roles:
+    - webserver

@@ -1,0 +1,24 @@
+---
+- name: install MySQL
+  yum: 
+   name: "{{ item }}"
+  loop:
+    - mysql-server
+    - python-mysqldb
+
+- name: Ensure MySQL will listen on all ip interfaces (bind to 0.0.0.0)
+  lineinfile: 
+    path: /etc/mysql/my.cnf
+    regexp: 'bind-address\s*=\s*127\.0\.0\.1\s*'
+    line: 'bind-address   = 0.0.0.0'
+    state: present
+    backrefs: yes
+  notify: reload mysql
+
+- name: add mysql user
+  mysql_user:
+    name: otus
+    password: '1234'
+    encrypted: yes
+    priv: '*.*:ALL'
+    state: present

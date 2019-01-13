@@ -1,0 +1,9 @@
+---
+- name: install php with extensions
+  apt: 
+    name: "{{ item }}" 
+    state: present
+  loop:
+   - php5
+   - php5-mysql
+   - php-db
