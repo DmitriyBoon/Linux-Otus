@@ -24,19 +24,29 @@ end
     mysql.vm.hostname = "mysql.internal"
   end
 
+  config.vm.define "mysqlslave" do |mysqlslave|
+    mysqlslave.vm.network "private_network", ip: "192.168.50.5"
+    mysqlslave.vm.hostname = "mysqlslave.internal"
+  end
+
   config.vm.define "web" do |web|
-    web.vm.network "private_network", ip: "192.168.50.5"
+    web.vm.network "private_network", ip: "192.168.50.6"
     web.vm.hostname = "web.internal"
   end
 
     config.vm.define "web2" do |web2|
-    web2.vm.network "private_network", ip: "192.168.50.6"
+    web2.vm.network "private_network", ip: "192.168.50.7"
     web2.vm.hostname = "web2.internal"
   end
   
   config.vm.define "web3" do |web3|
-    web3.vm.network "private_network", ip: "192.168.50.7"
+    web3.vm.network "private_network", ip: "192.168.50.8"
     web3.vm.hostname = "web3.internal"
+  end
+
+  config.vm.define "log" do |log|
+    log.vm.network "private_network", ip: "192.168.50.9"
+    log.vm.hostname = "log.internal"
   end
 
 end

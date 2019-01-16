@@ -1,0 +1,25 @@
+# rsyslog configuration defaults
+---
+rsyslog_main_config: "/etc/rsyslog.conf"
+rsyslog_include_path: "/etc/rsyslog.d"
+rsyslog_file_mode: "0640"
+rsyslog_file_create_mode: "0640"
+rsyslog_umask: "0022"
+rsyslog_abort_on_unclean_config: "off"
+rsyslog_repeated_msg_reduction: "off"
+rsyslog_action_file_default_template: RSYSLOG_TraditionalFileFormat
+#rsyslog_action_file_template: "%rawmsg%\n"
+#rsyslog_priv_drop_to_user: syslog
+#rsyslog_priv_drop_to_group: syslog
+items: []
+rsyslog_default_config: "True"
+rsyslog_os_supported: no
+rsyslog_plugin_mode: "0440"
+rsyslog_template_tmp: "/tmp"
+rsyslog_plugins: []
+rsyslog_tempates: []
+rsyslog_package_names: 
+  - rsyslog
+rsyslog_service_name: rsyslog
+rsyslog_file_owner: root
+rsyslog_file_group: root

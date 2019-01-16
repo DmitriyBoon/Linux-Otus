@@ -1,0 +1,98 @@
+# Install and configure rsyslog
+---
+- name: set OS dependent variables
+  include_vars: "{{ item }}"
+  loop:
+   - default.yml
+
+- name: install packages 
+  yum: 
+    name: "{{item}}" 
+    state: installed
+  loop: 
+    - rsyslog_package_names
+
+- name: create additional configuration directory
+  file: 
+    path: "{{ rsyslog_include_path }}"
+    owner: "{{ rsyslog_file_owner }}"
+    group: "{{ rsyslog_file_group }}"
+    mode: "{{ rsyslog_file_mode }}"
+    state: directory
+  when: rsyslog_os_supported == True
+
+- name: setup main configuration
+  template:
+    src: rsyslog.conf.j2
+    dest: "{{ rsyslog_main_config }}"
+    owner: "{{ rsyslog_file_owner }}"
+    group: "{{ rsyslog_file_group }}"
+    mode: "{{ rsyslog_file_mode }}"
+  notify:
+    - restart rsyslog
+  when: rsyslog_os_supported == True
+
+- name: process extra plugins
+  get_url: 
+    url: "{{ item.url}}"
+    dest: "{{ rsyslog_plugin_dir }}/{{ item.name }}"
+    mode: "{{ rsyslog_plugin_mode }}"
+  with_items: "{{rsyslog_plugins}}"
+  notify:
+    - restart rsyslog
+  when: rsyslog_os_supported == True
+
+- name: Process templates - acquire template
+  get_url: 
+    url: "{{ item.url }}"
+    dest: "{{ rsyslog_template_tmp }}/{{ item.name }}"
+    mode: 0220
+  with_items: "{{ rsyslog_templates }}"
+  when: rsyslog_os_supported == True
+
+- name: Process templates - create config
+  template: 
+    src: "{{ rsyslog_template_tmp }}/{{ item.name }}"
+    dest: "{{ rsyslog_include_path }}/{{item.dest}}"
+    owner: "{{ rsyslog_file_owner }}"
+    group: "{{ rsyslog_file_group }}"
+    mode: "{{ rsyslog_file_mode }}"
+  with_items: "{{ rsyslog_templates }}"
+  notify:
+    - restart rsyslog
+  when: rsyslog_os_supported == True
+
+- name: setup default additional configuration for file destination
+  template:
+    src: rsyslog.snippet.conf.j2
+    dest: "{{ rsyslog_include_path }}/{{item.name}}.conf"
+    owner: "{{ rsyslog_file_owner }}"
+    group: "{{ rsyslog_file_group }}"
+    mode: "{{ rsyslog_file_mode }}"
+  loop:
+    - name: "50-default"
+      lines:
+        - '*.*                                      /var/log/syslog'
+  notify:
+    - restart rsyslog
+  when: rsyslog_default_config == "True" and rsyslog_os_supported == True
+
+- name: setup additional configurations
+  template:
+    src: rsyslog.snippet.conf.j2
+    dest: "{{ rsyslog_include_path }}/{{item.name}}.conf"
+    owner: "{{ rsyslog_file_owner }}"
+    group: "{{ rsyslog_file_group }}"
+    mode: "{{ rsyslog_file_mode }}"
+  loop:
+    - "{{ items }}"
+  notify:
+    - restart rsyslog
+  when: rsyslog_os_supported == True
+
+- name: enable service
+  service: 
+    name: {{ rsyslog_service_name }} 
+    enabled: yes 
+    state: started
+  when: rsyslog_os_supported == True

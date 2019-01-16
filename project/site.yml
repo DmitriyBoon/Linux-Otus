@@ -10,9 +10,9 @@
   become: true
   vars:
     web_server: 
-        - 192.168.50.5:80
         - 192.168.50.6:80
         - 192.168.50.7:80
+        - 192.168.50.8:80
   roles:
     - proxy
 
@@ -29,3 +29,9 @@
     document_root: /vagrant
   roles:
     - webserver
+
+- name: install rsyslog servers
+  hosts: log
+  become: true
+  roles:
+    - log
